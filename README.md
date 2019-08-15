@@ -12,9 +12,9 @@ Main Tasks perfomed:
 In order to succesfully use this application, y
 
 ## Dependencies
-This Azure Function depends on few other project:
-- Certes (xxx) for the interface with Let's Encrypt services via ACME
-- Sendgrid (xxx) for the email processing
+This project depends on few other project:
+- [Certes](https://github.com/fszlin/certes) for the interface with Let's Encrypt services via ACME
+- [Sendgrid](https://sendgrid.com/) for the email processing
 
 ## Configuration
 asd
