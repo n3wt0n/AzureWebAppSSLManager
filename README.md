@@ -20,7 +20,7 @@ In order to succesfully use this application, you need a number of Prerequisites
 - A Service Principal and it's config values
 - A SendGrid account and a valid SendGrid key
 
-#### [Service Principal]
+#### [SP]:Service Principal
 You need to have a Service Principal to be able to performa management operations on Azure, like uploading the certificate to the App Service or managing the DNS Zone.
 
 If you don't have a Service Principal, you can create one with the following command via Azure CLI:
@@ -62,7 +62,7 @@ They can be created in the Azure Web App configuration section when deployed, or
     "SendGridKey": "SENDGRID_KEY",
     "EmailSender": "SENDER@YOURSERVICE.EXT
 ```
-The config settings for the Service Princil are the one from the output of the [Service Principal] creation above.
+The config settings for the Service Princil are the one from the output of the [Service Principal][SP] creation above.
 
 ## Application Properties Configuration File
 asd
