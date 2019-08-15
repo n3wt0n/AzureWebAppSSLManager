@@ -7,3 +7,15 @@ Main Tasks perfomed:
 - Download the certificates and save them on Azure Blob Storage
 - Install the certificates on Azure App Service Web App
 - Associate the certificates to the hostname bindings
+
+## Prerequisites
+asd
+
+## Dependencies
+asd
+
+## Configuration
+asd
+
+## Application Properties Configuration File
+asd
