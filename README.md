@@ -17,7 +17,20 @@ This project depends on few other project:
 - [Sendgrid](https://sendgrid.com/) for the email processing
 
 ## Configuration
-asd
+To be able to run, AzureWebAppSSLManager needs the following configuration settings.
+
+They can be created in the Azure Web App configuration section when deployed, or in the local.settings.json file when debugging.
+
+```json
+    "CertificateOwnerEmail": "YOUR_NAME@EMAIL.XXX",
+    "SubscriptionID": "SUBSCRIPTION_ID",
+    "ServicePrincipalClientID": "SERVICE_PRINCIPAL_APP_ID",
+    "ServicePrincipalClientSecret": "SERVICE_PRINCIPAL_PASSWORD",
+    "ServicePrincipalTenantID": "SERVICE_PRINCIPAL_TENANT_ID",
+    "AzureStorageAccountConnectionString": "AZURE_STORAGE_FULL_CONNECTION_STRING",
+    "SendGridKey": "SENDGRID_KEY",
+    "EmailSender": "SENDER@YOURSERVICE.EXT
+```
 
 ## Application Properties Configuration File
 asd
