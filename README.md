@@ -67,7 +67,11 @@ They can be created in the Azure Web App configuration section when deployed, or
 The config settings for the Service Princil are the one from the output of the Service Principal creation above.
 
 ## Application Properties Configuration File
-asd
+Currently AzureWebAppSSLManager retrieves the list of certificates to generate and install from a json file stored in a blob storage accout.
+
+An example of the file structure can be found in the [appproperties.json](../blob/master/SampleJsonConfig/appproperties.json) example file.
+
+The file needs to be saved in a blob container with name as in the constant "" of the [Constants.cs](../blob/master/src/WebAppSSLManager/Models/Contants.cs) class;
 
 ## Limitations
 Currently an instance of AzureWebAppSSLManager can manage Web Apps in a single subscriptiont.
