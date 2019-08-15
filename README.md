@@ -78,4 +78,4 @@ Currently an instance of AzureWebAppSSLManager can manage Web Apps in a single s
 If you need/want to manage App Service Web Apps in multiple subscriptions, you would need to deploy one instance of the function per subscription.
 
 ## Support ###
-If you encounter some issues trying this library, please let me know through the [Issues page](https://github.com/n3wt0n/AzureWebAppSSLManager/issues) and I'll fix the problem as soon as possible!
+If you encounter some issues with this project please let me know through the [Issues page](https://github.com/n3wt0n/AzureWebAppSSLManager/issues) and I'll fix the problem as soon as possible!
