@@ -1,0 +1,16 @@
+[
+  {
+    "Hostname": "*.YOUR_DOMAIN.EXT", //For wildcards
+    "AzureWebAppName": "YOUR_WEBAPP_RESOURCE_NAME",
+    "AzureWebAppResGroup": "RESOURCE_GROUP_CONTAINING_THE_WEBAPP",
+    "AzureDnsZoneName": "YOUR_DNS_RESOURCE_NAME",
+    "AzureDnsResGroup": "RESOURCE_GROUP_CONTAINING_THE_DNS"
+  },
+  {
+    "Hostname": "SUB.YOUR_DOMAIN.EXT", //For single hostname
+    "AzureWebAppName": "ANOTHER_WEBAPP_RESOURCE_NAME",
+    "AzureWebAppResGroup": "RESOURCE_GROUP_CONTAINING_THE_WEBAPP",
+    "AzureDnsZoneName": "YOUR_DNS_RESOURCE_NAME",
+    "AzureDnsResGroup": "RESOURCE_GROUP_CONTAINING_THE_DNS"
+  }
+] 
