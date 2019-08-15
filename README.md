@@ -16,6 +16,7 @@ This project depends on few other project:
 ## Prerequisites
 In order to succesfully use this application, you need a number of Prerequisites.
 - At least one Azure Web App with at least one custom domain assigned
+- A Blob storage account to save the App Properties configuration (see below) and to save the certificates
 - The DNS for the custom domain must be managed via an Azure DNS Zone
 - A Service Principal and it's config values
 - A SendGrid account and a valid SendGrid API Key
