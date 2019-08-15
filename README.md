@@ -9,13 +9,19 @@ Main Tasks perfomed:
 - Associate the certificates to the hostname bindings
 
 ## Prerequisites
-asd
+In order to succesfully use this application, y
 
 ## Dependencies
-asd
+This Azure Function depends on few other project:
+- Certes (xxx) for the interface with Let's Encrypt services via ACME
+- Sendgrid (xxx) for the email processing
 
 ## Configuration
 asd
 
 ## Application Properties Configuration File
 asd
+
+## Limitations
+Currently an instance of AzureWebAppSSLManager can manage Web Apps in a single subscriptiont.
+If you need/want to manage App Service Web Apps in multiple subscriptions, you would need to deploy one instance of the function per subscription.
