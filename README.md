@@ -2,11 +2,11 @@
 Azure WebApp SSL Manager is an Azure Function that manages SSL certificates for Azure Web App hosted applications.
 
 Main Tasks perfomed:
-- Order SSL certificates from Let's Encrypt free CA
-- Validates the order using Azure DNS TXT record
-- Download the certificates and save them on Azure Blob Storage
-- Install the certificates on Azure App Service Web App
-- Associate the certificates to the hostname bindings
+- Order/Renewal of SSL certificates from Let's Encrypt free CA
+- Validation of the order using Azure DNS TXT record
+- Download of the certificates and save them on Azure Blob Storage
+- Installation of the certificates on Azure App Service Web App
+- Association of the certificates to the WebApp hostname bindings
 
 ## Dependencies
 This project depends on few other project:
@@ -15,7 +15,7 @@ This project depends on few other project:
 
 ## Prerequisites
 In order to succesfully use this application, you need a number of Prerequisites.
-- At least one Azure Web App with at least one custom domain assigned
+- At least one Azure Web App, with at least one custom domain assigned, running in Basic, Standard or Premium tier
 - A Blob storage account to save the App Properties configuration (see below) and to save the certificates
 - The DNS for the custom domain must be managed via an Azure DNS Zone
 - A Service Principal and it's config values
