@@ -1,4 +1,4 @@
-﻿namespace WebAppSSLManager
+﻿namespace WebAppSSLManager.Models
 {
     public class Constants
     {

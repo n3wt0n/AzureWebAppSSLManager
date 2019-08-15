@@ -1,0 +1,1 @@
+Upload the file "appproperties.json" in your Azure Storage Account, on a Blob storage, in a container with the name specified in the constant "CertificateBlobContainer" of the file "Models/Constants.cs"
