@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "functionAppName": {
+            "value": "NEW_FUNCTION_APP_NAME"
+        },
+        "storageAccountName": {
+            "value": "NEW_STORAGE_ACCOUNT_NAME"
+        },
+        "appInsightsName": {
+            "value": "NEW_APPLICATION_INSIGHTS_NAME"
+        },
+        "certificateOwnerEmail": {
+            "value": "YOURNAME@YOUREMAIL.EXT"
+        },
+        "servicePrincipalClientID": {
+            "value": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+        },
+        "servicePrincipalClientSecret": {
+            "value": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+        },
+        "servicePrincipalTenantID": {
+            "value": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+        },
+        "sendGridKey": {
+            "value": "XY.XYXYXYXYXYXYXYXYXYXYXY.XYXYX-XYXYXYXYXYXYXYXYXYXYXYXYXYXYXYXYXYXYX"
+        },
+        "emailSender": {
+            "value": "SERVICE@SERVICEEMAILDOMAIN.EXT"
+        }
+    }
+}
