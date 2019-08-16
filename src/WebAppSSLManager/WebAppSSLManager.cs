@@ -16,7 +16,7 @@ namespace WebAppSSLManager
 
         //Runs once per month, on the 1st day of the month at 12 midnight
         [FunctionName("WebAppSSLManager")]
-        public static async Task Run([TimerTrigger("0 0 1 * *"
+        public static async Task Run([TimerTrigger("0 0 0 1 * *"
 #if DEBUG
             , RunOnStartup=true
 #endif
