@@ -5,7 +5,7 @@
         "functionAppName": {
             "type": "string"
         },
-        "storageName": {
+        "storageAccountName": {
             "type": "string"
         },
         "appInsightsName": {
@@ -31,17 +31,33 @@
         }
     },
     "variables": {  
-        "location": "[resourceGroup().location]"
+        "location": "[resourceGroup().location]",
+        "blobContainerName": "certificates"
     },
     "resources": [
         {
-            "apiVersion": "2015-05-01-preview",
+            "apiVersion": "2018-07-01",
             "type": "Microsoft.Storage/storageAccounts",
-            "name": "[parameters('storageName')]",
+            "name": "[parameters('storageAccountName')]",
             "location": "[variables('location')]",
+            "kind": "StorageV2",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
             "properties": {
-                "accountType": "Standard_LRS"
-            }
+                "accessTier": "Cool"
+            },
+            "resources": [
+                {
+                    "name": "[concat('default/', variables('blobContainerName'))]",
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-07-01",
+                    "dependsOn": [
+                        "[parameters('storageAccountName')]"
+                    ]
+                }
+            ]
         },
         {
             "apiVersion": "2015-05-01",
@@ -75,7 +91,7 @@
             "kind": "functionapp",
             "dependsOn": [
                 "[resourceId('Microsoft.Web/serverfarms', parameters('functionAppName'))]",
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
                 "[concat('microsoft.insights/components/',parameters('appInsightsName'))]"
             ],
             "properties": {
@@ -88,7 +104,7 @@
                         },
                         {
                             "name": "AzureWebJobsStorage",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2015-05-01-preview').key1)]"
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -96,7 +112,7 @@
                         },
                         {
                             "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2015-05-01-preview').key1)]"
                         },
                         {
                             "name": "WEBSITE_CONTENTSHARE",
@@ -132,7 +148,7 @@
                         },
                         {
                             "name": "AzureStorageAccountConnectionString",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2015-05-01-preview').key1)]"
                         },
                         {
                             "name": "SendGridKey",
