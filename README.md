@@ -5,7 +5,7 @@
 > Before deploying this solution to Azure, you need to create a Service Principal (see below).  
 > Unfortunately due to Azure ARM templates limitation it is not possible for me to include this step in the deployment.  
 >
-> Also, be sure to create your SendGrid API Key (se below).
+> Also, be sure to create your SendGrid API Key (see below).
 
 > **Post-Deployment**  
 > After deploying the solution to Azure, make sure to set up the required configuration.  
