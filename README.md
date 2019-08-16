@@ -85,7 +85,7 @@ Currently AzureWebAppSSLManager retrieves the list of certificates to generate a
 
 An example of the file structure can be found in the *[appproperties.json](../master/SampleJsonConfig/appproperties.json)* example file.
 
-The file needs to be saved in a blob container with name as in the constant "" of the *[Constants.cs](../master/src/WebAppSSLManager/Models/Contants.cs)* class;
+The file needs to be saved in a blob container with name as in the constant "AppPropertiesFileName" of the *[Constants.cs](../master/src/WebAppSSLManager/Models/Contants.cs)* class;
 
 ## Limitations
 Currently an instance of AzureWebAppSSLManager can manage Web Apps in a single subscriptiont.
