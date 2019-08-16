@@ -1,6 +1,7 @@
 ﻿using Certes;
 using Certes.Acme;
 using Microsoft.Extensions.Logging;
+using Org.BouncyCastle.Crypto.Tls;
 using System;
 using System.Linq;
 using System.Threading;
@@ -22,7 +23,7 @@ namespace WebAppSSLManager
 
         private static AcmeContext _acme;
 
-        public static async Task InitAsync(ILogger logger)
+        public static async Task InitAsync(ILogger logger, CertificateMode certificateMode)
         {
             _logger = logger;
 
@@ -45,7 +46,7 @@ namespace WebAppSSLManager
                 // Load the saved account key
                 var pemKey = await AzureHelper.ReadFileFromBlobStorageToStringAsync(Constants.AccountKeyFileName);
                 var accountKey = KeyFactory.FromPem(pemKey);
-                _acme = new AcmeContext(WellKnownServers.LetsEncryptStagingV2, accountKey);
+                _acme = new AcmeContext(certificateMode == CertificateMode.Production ? WellKnownServers.LetsEncryptV2 : WellKnownServers.LetsEncryptStagingV2, accountKey);
                 var account = await _acme.Account();
             }
             else
