@@ -2,9 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.1",
     "parameters": {
-        "resourceGroupName": {
-            "type": "string"
-        },
         "functionAppName": {
             "type": "string"
         },
@@ -12,12 +9,6 @@
             "type": "string"
         },
         "appInsightsName": {
-            "type": "string"
-        },
-        "location": {
-            "type": "string"
-        },
-        "subscriptionId": {
             "type": "string"
         },
         "certificateOwnerEmail": {
