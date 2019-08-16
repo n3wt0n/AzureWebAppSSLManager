@@ -1,0 +1,177 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.1",
+    "parameters": {
+        "resourceGroupName": {
+            "type": "string"
+        },
+        "functionAppName": {
+            "type": "string"
+        },
+        "storageName": {
+            "type": "string"
+        },
+        "appInsightsName": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "subscriptionId": {
+            "type": "string"
+        },
+        "certificateOwnerEmail": {
+            "type": "string"
+        },
+        "servicePrincipalClientID": {
+            "type": "string"
+        },
+        "servicePrincipalClientSecret": {
+            "type": "string"
+        },
+        "servicePrincipalTenantID": {
+            "type": "string"
+        },
+        "sendGridKey": {
+            "type": "string"
+        },
+        "emailSender": {
+            "type": "string"
+        }
+    },
+    "variables": {  
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[parameters('storageName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "accountType": "Standard_LRS"
+            }
+        },
+        {
+            "apiVersion": "2015-05-01",
+            "name": "[parameters('appInsightsName')]",
+            "type": "microsoft.insights/components",
+            "location": "[parameters('location')]",
+            "properties": {
+                "ApplicationId": "[parameters('functionAppName')]",
+                "Request_Source": "IbizaWebAppExtensionCreate"
+            }
+        },
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2018-02-01",
+            "name": "[parameters('functionAppName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+            "name": "Y1",
+            "tier": "Dynamic"
+            },
+            "properties": {
+            "name": "[parameters('functionAppName')]",
+            "computeMode": "Dynamic"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2016-03-01",
+            "name": "[parameters('functionAppName')]",
+            "location": "[parameters('location')]",
+            "kind": "functionapp",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('functionAppName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
+                "[concat('microsoft.insights/components/',parameters('appInsightsName'))]"
+            ],
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('functionAppName'))]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "FUNCTIONS_WORKER_RUNTIME",
+                            "value": "dotnet"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~2"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTSHARE",
+                            "value": "[concat(toLower(parameters('functionAppName')), '9446')]"
+                        },
+                        {
+                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                            "value": "10.14.1"
+                        },
+                        {
+                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                            "value": "[reference(concat('Microsoft.Insights/components/', parameters('appInsightsName')), '2015-05-01').InstrumentationKey]"
+                        },
+                        {
+                            "name": "CertificateOwnerEmail",
+                            "value": "[parameters('certificateOwnerEmail')]"
+                        },
+                        {
+                            "name": "SubscriptionID",
+                            "value": "[subscription().subscriptionId]"
+                        },
+                        {
+                            "name": "ServicePrincipalClientID",
+                            "value": "[parameters('servicePrincipalClientID')]"
+                        },
+                        {
+                            "name": "ServicePrincipalClientSecret",
+                            "value": "[parameters('servicePrincipalClientSecret')]"
+                        },
+                        {
+                            "name": "ServicePrincipalTenantID",
+                            "value": "[parameters('servicePrincipalTenantID')]"
+                        },
+                        {
+                            "name": "AzureStorageAccountConnectionString",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "SendGridKey",
+                            "value": "[parameters('sendGridKey')]"
+                        },
+                        {
+                            "name": "EmailSender",
+                            "value": "[parameters('emailSender')]"
+                        }
+                    ]
+                },
+                "name": "[parameters('functionAppName')]",
+                "clientAffinityEnabled": false,
+                "reserved": false
+            },
+            "resources": [
+              {
+                "apiVersion": "2015-08-01",
+                "name": "web",
+                "type": "sourcecontrols",
+                "dependsOn": [
+                  "[resourceId('Microsoft.Web/Sites', parameters('functionAppName'))]"
+                ],
+                "properties": {
+                  "RepoUrl": "https://github.com/n3wt0n/AzureWebAppSSLManager.git",
+                  "branch": "master",
+                  "IsManualIntegration": true
+                }
+              }
+            ]
+        }
+    ],
+    "outputs": {}
+}
