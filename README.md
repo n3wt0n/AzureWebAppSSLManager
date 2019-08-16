@@ -1,14 +1,15 @@
 # AzureWebAppSSLManager
 [![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fn3wt0n%2FAzureWebAppSSLManager%2Fmaster%2FARM%2520Template%2Ftemplate.json) [![Visualize](http://armviz.io/visualizebutton.png)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fn3wt0n%2FAzureWebAppSSLManager%2Fmaster%2FARM%2520Template%2Ftemplate.json)
 
---
+> **Pre-Deployment**  
+> Before deploying this solution to Azure, you need to create a Service Principal (see below).  
+> Unfortunately due to Azure ARM templates limitation it is not possible for me to include this step in the deployment.  
+>
+> Also, be sure to create your SendGrid API Key (se below).
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fn3wt0n%2FAzureWebAppSSLManager%2Fmaster%2FARM%2520Template%2Ftemplate.json" target="_blank">
-    <img src="http://azuredeploy.net/deploybutton.png"/>
-</a>
-<a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fn3wt0n%2FAzureWebAppSSLManager%2Fmaster%2FARM%2520Template%2Ftemplate.json" target="_blank">
-    <img src="http://armviz.io/visualizebutton.png"/>
-</a>
+> **Post-Deployment**  
+> After deploying the solution to Azure, make sure to set up the required configuration.  
+> See the *Application Properties Configuration File* section below for more information
 
 ## Overview
 Azure WebApp SSL Manager is an Azure Function that manages SSL certificates for Azure Web App hosted applications.
@@ -42,7 +43,7 @@ az ad sp create-for-rbac
 ```
 
 You need to have enough privileges in your Azure AAD to be able to succesfully create a Service Principal.
-
+ 
 Visit the [Azure Docs page](https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?view=azure-cli-latest) for more information about Azure Service Principals creation.
 
 Once created, **take note of the output values**, especially the password because it won't be possible to retrieve it later.
