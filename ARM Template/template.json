@@ -32,6 +32,7 @@
     },
     "variables": {  
         "location": "[resourceGroup().location]",
+        "appServicePlan":"[concat(parameters('functionAppName'),'Plan')]",
         "blobContainerName": "certificates"
     },
     "resources": [
@@ -72,15 +73,15 @@
         {
             "type": "Microsoft.Web/serverfarms",
             "apiVersion": "2018-02-01",
-            "name": "[parameters('functionAppName')]",
+            "name": "[variables('appServicePlan')]",
             "location": "[variables('location')]",
             "sku": {
             "name": "Y1",
             "tier": "Dynamic"
             },
             "properties": {
-            "name": "[parameters('functionAppName')]",
-            "computeMode": "Dynamic"
+                "name": "[variables('appServicePlan')]",
+                "computeMode": "Dynamic"
             }
         },
         {
@@ -90,12 +91,12 @@
             "location": "[variables('location')]",
             "kind": "functionapp",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', parameters('functionAppName'))]",
+                "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlan'))]",
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
                 "[concat('microsoft.insights/components/',parameters('appInsightsName'))]"
             ],
             "properties": {
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('functionAppName'))]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlan'))]",
                 "siteConfig": {
                     "appSettings": [
                         {
