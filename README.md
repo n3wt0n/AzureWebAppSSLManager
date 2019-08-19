@@ -17,7 +17,7 @@ Azure WebApp SSL Manager is an Azure Function that acquires and manages **free**
 Azure WebApp SSL Manager is an Azure Function that acquires and manages **free** SSL certificates for Azure Web App hosted applications.
 
 Main Tasks perfomed:
-- Order/Renewal of SSL certificates from Let's Encrypt free CA
+- Order/Renewal of SSL certificates from [Let's Encrypt](https://letsencrypt.org/) free CA
 - Validation of the order using Azure DNS TXT record
 - Download of the certificates and save them on Azure Blob Storage
 - Installation of the certificates on Azure App Service Web App
@@ -39,7 +39,7 @@ In order to succesfully use this application, you need a number of Prerequisites
 #### Service Principal
 You need to have a Service Principal to be able to performa management operations on Azure, like uploading the certificate to the App Service or managing the DNS Zone.
 
-If you don't have a Service Principal, you can create one with the following command via Azure CLI:
+If you don't have a Service Principal, you can create one with the following command via Azure CLI. You can execute the command from any PC with the Azure CLI installed or from the [Azure Shell](http://shell.azure.com)
 ```
 az ad sp create-for-rbac
 ```
