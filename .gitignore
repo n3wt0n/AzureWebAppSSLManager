@@ -263,3 +263,4 @@ paket-files/
 __pycache__/
 *.pyc
 /ARM Template/parameters.json
+/src/WebAppSSLManager/Properties/PublishProfiles

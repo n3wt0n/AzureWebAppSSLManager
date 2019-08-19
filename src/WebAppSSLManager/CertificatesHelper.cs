@@ -52,7 +52,7 @@ namespace WebAppSSLManager
             else
             {
                 _logger.LogInformation("        Creating new account");
-                _acme = new AcmeContext(certificateMode == CertificateMode.Production ? WellKnownServers.LetsEncryptV2 : WellKnownServers.LetsEncryptStagingV2, accountKey);
+                _acme = new AcmeContext(certificateMode == CertificateMode.Production ? WellKnownServers.LetsEncryptV2 : WellKnownServers.LetsEncryptStagingV2);
                 var account = await _acme.NewAccount(_email, true);
 
                 // Save the account key for later use
