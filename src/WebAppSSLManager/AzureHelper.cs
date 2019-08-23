@@ -157,7 +157,7 @@ namespace WebAppSSLManager
             var pfxByteArrayContent = await ReadFileFromBlobStorageToByteArrayAsync(_pfxFileName);
 
             var certificate = await _azure.AppServices.AppServiceCertificates
-                                        .Define(_hostname)
+                                        .Define($"{_hostname}_{DateTime.UtcNow.ToString("yyyyMMdd")}")
                                         .WithRegion(webApp.Region)
                                         .WithExistingResourceGroup(webApp.ResourceGroupName)
                                         .WithPfxByteArray(pfxByteArrayContent)
