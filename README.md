@@ -60,6 +60,8 @@ The output will look like this;
 }
 ```
 
+If you experience any problem with Service Principal, take a look at [this wiki page](../../wiki/About-Service-Principals).
+
 #### SendGrid key
 AzureWebAppSSLManager sends emails using the ** extension, which needs a valid SendGrid API Key.
 
@@ -80,7 +82,7 @@ They can be created in the Azure Web App configuration section when deployed, or
     "SendGridKey": "SENDGRID_KEY",
     "EmailSender": "SENDER@YOURSERVICE.EXT
 ```
-The config settings for the Service Princil are the one from the output of the Service Principal creation above.
+The config settings for the Service Principal are the ones from the output of the Service Principal creation above.
 
 ## Application Properties Configuration File
 Currently AzureWebAppSSLManager retrieves the list of certificates to generate and install from a json file stored in a blob storage accout.
