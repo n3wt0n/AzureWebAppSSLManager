@@ -27,47 +27,27 @@ namespace WebAppSSLManager
         private static string _hostnameFriendly;
         private static string _pfxFileName;
 
-        public static void Init(ILogger log)
+        public static void Init(ILogger logger)
         {
-            _logger = log;
-
-            var subscriptionId = Environment.GetEnvironmentVariable("SubscriptionID");
-            if (string.IsNullOrWhiteSpace(subscriptionId))
-                log.LogError("SubscriptionID environment variable is null");
-
-            var clientId = Environment.GetEnvironmentVariable("ServicePrincipalClientID");
-            if (string.IsNullOrWhiteSpace(clientId))
-                log.LogError("ServicePrincipalClientID environment variable is null");
-
-            var clientSecret = Environment.GetEnvironmentVariable("ServicePrincipalClientSecret");
-            if (string.IsNullOrWhiteSpace(clientSecret))
-                log.LogError("ServicePrincipalClientSecret environment variable is null");
-
-            var tenantId = Environment.GetEnvironmentVariable("ServicePrincipalTenantID");
-            if (string.IsNullOrWhiteSpace(tenantId))
-                log.LogError("ServicePrincipalTenantID environment variable is null");
-
-
-            var storageConnectionString = Environment.GetEnvironmentVariable("AzureStorageAccountConnectionString");
-            if (string.IsNullOrWhiteSpace(storageConnectionString))
-                log.LogError("AzureStorageAccountConnectionString environment variable is null");
-
+            _logger = logger;
+            
             _logger.LogInformation($"Initializing Azure bits");
             var credentials = SdkContext.AzureCredentialsFactory
-                                    .FromServicePrincipal(clientId,
-                                    clientSecret,
-                                    tenantId,
+                                    .FromServicePrincipal(Settings.ServicePrincipalClientID,
+                                    Settings.ServicePrincipalClientSecret,
+                                    Settings.ServicePrincipalTenantID,
                                     AzureEnvironment.AzureGlobalCloud);
+
             _azure = Azure
                 .Configure()
                 .WithLogLevel(HttpLoggingDelegatingHandler.Level.Basic)
                 .Authenticate(credentials)
-                .WithSubscription(subscriptionId);
+                .WithSubscription(Settings.SubscriptionID);
 
             _logger.LogInformation($"   Selected subscription: {_azure.SubscriptionId}");
             _logger.LogInformation(Environment.NewLine);
 
-            var storageAccount = CloudStorageAccount.Parse(storageConnectionString);
+            var storageAccount = CloudStorageAccount.Parse(Settings.AzureStorageAccountConnectionString);
             _blobClient = storageAccount.CreateCloudBlobClient();
             _blobContainer = _blobClient.GetContainerReference(Constants.CertificateBlobContainer);
         }

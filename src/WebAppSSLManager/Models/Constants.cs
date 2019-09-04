@@ -6,5 +6,6 @@
         public const string AccountKeyFileName = "accountkey.pem";
         public const string DefaultCertificatePassword = "C0mpl1c4t3d57r1ng";
         public const string CertificateBlobContainer = "certificates";
+        public const string DefaultEmailSender = "AzureWebAppSSLManager@dbtek.com.hk";
     }
 }

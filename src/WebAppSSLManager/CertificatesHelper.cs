@@ -13,7 +13,6 @@ namespace WebAppSSLManager
     public static class CertificatesHelper
     {
         private static ILogger _logger;
-        private static string _email;
         private static string _hostname;
         private static string _hostnameFriendly;
         private static string _basedomain;
@@ -26,13 +25,6 @@ namespace WebAppSSLManager
         public static async Task InitAsync(ILogger logger, CertificateMode certificateMode)
         {
             _logger = logger;
-
-            _email = Environment.GetEnvironmentVariable("CertificateOwnerEmail");
-            if (string.IsNullOrWhiteSpace(_email))
-            {
-                _logger.LogError("CertificateOwnerEmail environment variable is null");
-                throw new ArgumentNullException("CertificateOwnerEmail environment variable is null");
-            }
 
             _logger.LogInformation($"Initializing LetsEncrypt bits");
 
@@ -53,7 +45,7 @@ namespace WebAppSSLManager
             {
                 _logger.LogInformation("        Creating new account");
                 _acme = new AcmeContext(certificateMode == CertificateMode.Production ? WellKnownServers.LetsEncryptV2 : WellKnownServers.LetsEncryptStagingV2);
-                var account = await _acme.NewAccount(_email, true);
+                var account = await _acme.NewAccount(Settings.CertificateOwnerEmail, true);
 
                 // Save the account key for later use
                 var pemKey = _acme.AccountKey.ToPem();

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using WebAppSSLManager.Models;
 
 namespace WebAppSSLManager
 {
@@ -12,27 +13,11 @@ namespace WebAppSSLManager
     {
         private static ILogger _logger;
         private static IAsyncCollector<SendGridMessage> _messageCollector;
-        private static string _email;
-        private static string _emailSender;
 
         public static void Init(ILogger logger, IAsyncCollector<SendGridMessage> messageCollector)
         {
             _logger = logger;
             _messageCollector = messageCollector;
-
-            _email = Environment.GetEnvironmentVariable("CertificateOwnerEmail");
-            if (string.IsNullOrWhiteSpace(_email))
-            {
-                _logger.LogError("CertificateOwnerEmail environment variable is null");
-                throw new ArgumentNullException("CertificateOwnerEmail environment variable is null");
-            }
-
-            _emailSender = Environment.GetEnvironmentVariable("EmailSender");
-            if (string.IsNullOrWhiteSpace(_emailSender))
-            {
-                _logger.LogError("EmailSender environment variable is null");
-                throw new ArgumentNullException("EmailSender environment variable is null");
-            }
         }
 
         public static async Task SendEmailForErrorAsync(Exception ex, string errorMessage)
@@ -89,9 +74,9 @@ namespace WebAppSSLManager
             try
             {
                 var emailMessage = new SendGridMessage();
-                emailMessage.AddTo(_email);
+                emailMessage.AddTo(Settings.CertificateOwnerEmail);
                 emailMessage.AddContent("text/html", message);
-                emailMessage.SetFrom(new EmailAddress(_emailSender));
+                emailMessage.SetFrom(new EmailAddress(Settings.EmailSender));
                 emailMessage.SetSubject(subject);
 
                 await _messageCollector.AddAsync(emailMessage);
