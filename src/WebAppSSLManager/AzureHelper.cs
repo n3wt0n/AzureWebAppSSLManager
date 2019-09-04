@@ -161,7 +161,7 @@ namespace WebAppSSLManager
                                         .WithRegion(webApp.Region)
                                         .WithExistingResourceGroup(webApp.ResourceGroupName)
                                         .WithPfxByteArray(pfxByteArrayContent)
-                                        .WithPfxPassword(Constants.DefaultCertPassword)
+                                        .WithPfxPassword(Settings.CertificatePassword)
                                         .CreateAsync();
 
             var certificateThumbPrint = certificate.Thumbprint;

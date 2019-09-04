@@ -14,6 +14,9 @@
         "certificateOwnerEmail": {
             "type": "string"
         },
+        "certificatePassword": {
+            "type": "string"
+        },
         "servicePrincipalClientID": {
             "type": "string"
         },
@@ -130,6 +133,10 @@
                         {
                             "name": "CertificateOwnerEmail",
                             "value": "[parameters('certificateOwnerEmail')]"
+                        },
+                        {
+                            "name": "CertificatePassword",
+                            "value": "[parameters('certificatePassword')]"
                         },
                         {
                             "name": "SubscriptionID",

@@ -27,6 +27,8 @@ namespace WebAppSSLManager
             _logger = logger;
             logger.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
 
+            Settings.Init(logger);
+
             MailHelper.Init(logger, messageCollector);
             await MailHelper.SendEmailForActivityStartedAsync();
 

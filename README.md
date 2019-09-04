@@ -72,6 +72,7 @@ They can be created in the Azure Web App configuration section when deployed, or
 
 ```json
     "CertificateOwnerEmail": "YOUR_NAME@EMAIL.XXX",
+    "CertificatePassword": "YOUR_PASSWORD",
     "SubscriptionID": "SUBSCRIPTION_ID",
     "ServicePrincipalClientID": "SERVICE_PRINCIPAL_APP_ID",
     "ServicePrincipalClientSecret": "SERVICE_PRINCIPAL_PASSWORD",

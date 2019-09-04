@@ -137,7 +137,7 @@ namespace WebAppSSLManager
 
                 _logger.LogInformation($"   Exporting PFX");
                 var pfxBuilder = cert.ToPfx(privateKey);
-                var pfxBytes = pfxBuilder.Build(_hostname, Constants.DefaultCertPassword);
+                var pfxBytes = pfxBuilder.Build(_hostname, Settings.CertificatePassword);
                 await AzureHelper.SaveFileToBlobStorageAsync(_pfxFileName, pfxBytes);
 
                 _logger.LogInformation(Environment.NewLine);
