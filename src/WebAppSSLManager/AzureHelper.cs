@@ -65,9 +65,14 @@ namespace WebAppSSLManager
             _hostnameFriendly = appProperty.HostnameFriendly;
             _pfxFileName = appProperty.PfxFileName;
 
-            if (appProperty.IsSlot)
+            if (appProperty.IsFunctionApp && appProperty.IsSlot)
             {
-                _resourceType = ResourceType.Slot;
+                _resourceType = ResourceType.FunctionAppSlot;
+                _slotName = appProperty.SlotName.Trim();
+            }
+            else if (appProperty.IsSlot)
+            {
+                _resourceType = ResourceType.WebAppSlot;
                 _slotName = appProperty.SlotName.Trim();
             }
             else if (appProperty.IsFunctionApp)
@@ -136,7 +141,7 @@ namespace WebAppSSLManager
 
             switch (_resourceType)
             {
-                case ResourceType.Slot:
+                case ResourceType.WebAppSlot:
                     var slot = await _azure.WebApps.ListByResourceGroup(_webAppResGroup).Where(w => w.Name.Equals(_webAppName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault().DeploymentSlots.GetByNameAsync(_slotName);
                     hostnamesInternal = slot.HostNames;
 
@@ -150,6 +155,14 @@ namespace WebAppSSLManager
 
                     region = functionApp.Region;
                     resource = functionApp;
+
+                    break;
+                case ResourceType.FunctionAppSlot:
+                    var functionAppSlot = await _azure.AppServices.FunctionApps.ListByResourceGroup(_webAppResGroup).Where(fa => fa.Name.Equals(_webAppName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault().DeploymentSlots.GetByNameAsync(_slotName);
+                    hostnamesInternal = functionAppSlot.HostNames;
+
+                    region = functionAppSlot.Region;
+                    resource = functionAppSlot;
 
                     break;
                 case ResourceType.WebApp:
@@ -199,7 +212,7 @@ namespace WebAppSSLManager
 
                     switch (_resourceType)
                     {
-                        case ResourceType.Slot:
+                        case ResourceType.WebAppSlot:
                             var slot = resource as IDeploymentSlot;
                             _logger.LogInformation($"       Updating {hostname} on WebApp Slot {slot.Name}");
 
@@ -226,6 +239,20 @@ namespace WebAppSSLManager
                                                     .WithSniBasedSsl()
                                                     .Attach()
                                             .ApplyAsync();
+                            break;
+                        case ResourceType.FunctionAppSlot:
+                            var functionAppSlot = resource as IFunctionDeploymentSlot;
+                            _logger.LogInformation($"       Updating {hostname} on FunctionApp Slot {functionAppSlot.Name}");
+
+                            functionAppSlot = await functionAppSlot
+                                                .Update()
+                                                    .WithThirdPartyHostnameBinding(domain, subdomain)
+                                                    .DefineSslBinding()
+                                                        .ForHostname(hostname)
+                                                        .WithExistingCertificate(certificateThumbPrint)
+                                                        .WithSniBasedSsl()
+                                                        .Attach()
+                                                .ApplyAsync();
                             break;
                         case ResourceType.WebApp:
                         default:

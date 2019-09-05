@@ -3,7 +3,8 @@
     public enum ResourceType
     {
         WebApp,
-        Slot,
-        FunctionApp
+        WebAppSlot,
+        FunctionApp,
+        FunctionAppSlot
     }
 }
