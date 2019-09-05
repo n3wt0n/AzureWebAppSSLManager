@@ -72,7 +72,7 @@ The output will look like this;
 If you experience any problem with Service Principal, take a look at [this wiki page](../../wiki/About-Service-Principals).
 
 #### SendGrid key
-AzureWebAppSSLManager sends emails using the ** extension, which needs a valid SendGrid API Key.
+AzureWebAppSSLManager sends emails using the *Microsoft.Azure.WebJobs.Extensions.SendGrid* extension, which needs a valid SendGrid API Key.
 
 To obtain an API Key, you can follow the [official SendGrid documentation](https://sendgrid.com/docs/ui/account-and-settings/api-keys/)
 
