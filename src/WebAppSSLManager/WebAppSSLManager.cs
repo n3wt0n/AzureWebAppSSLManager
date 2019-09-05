@@ -50,7 +50,7 @@ namespace WebAppSSLManager
                     {
                         //Request certificate and install it if all is ok
                         if (await CertificatesHelper.GetCertificateAsync())
-                            await AzureHelper.AddCertificateToWebAppAsync();
+                            await AzureHelper.AddCertificateAsync();
                     }
                     catch (Exception ex)
                     {

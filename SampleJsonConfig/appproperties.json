@@ -12,5 +12,14 @@
     "AzureWebAppResGroup": "RESOURCE_GROUP_CONTAINING_THE_WEBAPP",
     "AzureDnsZoneName": "YOUR_DNS_RESOURCE_NAME",
     "AzureDnsResGroup": "RESOURCE_GROUP_CONTAINING_THE_DNS"
+  },
+  {
+    "Hostname": "SUB.YOUR_DOMAIN.EXT", //For SLOT hostname
+    "AzureWebAppName": "ANOTHER_WEBAPP_RESOURCE_NAME",
+    "AzureWebAppResGroup": "RESOURCE_GROUP_CONTAINING_THE_WEBAPP",
+    "AzureDnsZoneName": "YOUR_DNS_RESOURCE_NAME",
+    "AzureDnsResGroup": "RESOURCE_GROUP_CONTAINING_THE_DNS",
+    "IsSlot": true,
+    "SlotName": "YOUR_SLOT_NAME"
   }
 ] 

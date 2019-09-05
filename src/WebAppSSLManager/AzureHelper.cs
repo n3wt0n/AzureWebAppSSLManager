@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.Management.Fluent;
+﻿using Microsoft.Azure.Management.AppService.Fluent;
+using Microsoft.Azure.Management.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent.Core;
 using Microsoft.Azure.Storage;
@@ -26,11 +27,13 @@ namespace WebAppSSLManager
         private static string _hostname;
         private static string _hostnameFriendly;
         private static string _pfxFileName;
+        private static ResourceType _resourceType;
+        private static string _slotName;
 
         public static void Init(ILogger logger)
         {
             _logger = logger;
-            
+
             _logger.LogInformation($"Initializing Azure bits");
             var credentials = SdkContext.AzureCredentialsFactory
                                     .FromServicePrincipal(Settings.ServicePrincipalClientID,
@@ -61,6 +64,14 @@ namespace WebAppSSLManager
             _hostname = appProperty.Hostname;
             _hostnameFriendly = appProperty.HostnameFriendly;
             _pfxFileName = appProperty.PfxFileName;
+
+            if (appProperty.IsSlot)
+            {
+                _resourceType = ResourceType.Slot;
+                _slotName = appProperty.SlotName;
+            }
+            else
+                _resourceType = ResourceType.WebApp;
         }
 
         public static async Task CreateDNSVerificationTXTRecord(string name, string value)
@@ -109,20 +120,41 @@ namespace WebAppSSLManager
         }
 
         /// <summary>
-        /// 
+        /// Add the certificate to the resource on Azure
         /// </summary>
-        /// <param name="name">Name of the webapp</param>
-        /// <param name="hostname">single hostname (www.domain.ext) or wildcard (*.domain.ext)</param>
-        /// <param name="pfxFileName"></param>
         /// <returns></returns>
-        public static async Task AddCertificateToWebAppAsync()
+        public static async Task AddCertificateAsync()
         {
             _logger.LogInformation($"Adding certificate to App Service and registering the Bindings");
-            var webApp = _azure.WebApps.ListByResourceGroup(_webAppResGroup).Where(w => w.Name == _webAppName.ToLower()).SingleOrDefault();
 
+            ISet<string> hostnamesInternal;
             var hostnamesList = new List<string>();
+            Region region;
+            IResource resource;
+
+            switch (_resourceType)
+            {
+                case ResourceType.Slot:
+                    var slot = await _azure.WebApps.ListByResourceGroup(_webAppResGroup).Where(w => w.Name == _webAppName.ToLower()).SingleOrDefault().DeploymentSlots.GetByNameAsync(_slotName);
+                    hostnamesInternal = slot.HostNames;
+
+                    region = slot.Region;
+                    resource = slot;
+
+                    break;
+                case ResourceType.WebApp:
+                default:
+                    var webApp = _azure.WebApps.ListByResourceGroup(_webAppResGroup).Where(w => w.Name == _webAppName.ToLower()).SingleOrDefault();
+                    hostnamesInternal = webApp.HostNames;
+
+                    region = webApp.Region;
+                    resource = webApp;
+
+                    break;
+            }
+
             if (_hostname.StartsWith("*."))
-                hostnamesList.AddRange(webApp.HostNames.Where(h => h.Contains(_hostnameFriendly)));
+                hostnamesList.AddRange(hostnamesInternal.Where(h => h.Contains(_hostnameFriendly)));
             else
                 hostnamesList.Add(_hostname);
 
@@ -138,8 +170,8 @@ namespace WebAppSSLManager
 
             var certificate = await _azure.AppServices.AppServiceCertificates
                                         .Define($"{_hostname}_{DateTime.UtcNow.ToString("yyyyMMdd")}")
-                                        .WithRegion(webApp.Region)
-                                        .WithExistingResourceGroup(webApp.ResourceGroupName)
+                                        .WithRegion(region)
+                                        .WithExistingResourceGroup(_webAppResGroup)
                                         .WithPfxByteArray(pfxByteArrayContent)
                                         .WithPfxPassword(Settings.CertificatePassword)
                                         .CreateAsync();
@@ -157,7 +189,26 @@ namespace WebAppSSLManager
 
                     _logger.LogInformation($"       Updating {hostname}");
 
-                    webApp = await webApp
+                    switch (_resourceType)
+                    {
+                        case ResourceType.Slot:
+                            var slot = resource as IDeploymentSlot;
+
+                            slot = await slot
+                                .Update()
+                                    .WithThirdPartyHostnameBinding(domain, subdomain)
+                                    .DefineSslBinding()
+                                        .ForHostname(hostname)
+                                        .WithExistingCertificate(certificateThumbPrint)
+                                        .WithSniBasedSsl()
+                                        .Attach()
+                                    .ApplyAsync();
+                            break;
+                        case ResourceType.WebApp:
+                        default:
+                            var webApp = resource as IWebApp;
+
+                            webApp = await webApp
                                     .Update()
                                     .WithThirdPartyHostnameBinding(domain, subdomain)
                                     .DefineSslBinding()
@@ -166,6 +217,8 @@ namespace WebAppSSLManager
                                         .WithSniBasedSsl()
                                         .Attach()
                                     .ApplyAsync();
+                            break;
+                    }
 
                     _logger.LogInformation($"       Done");
                 }

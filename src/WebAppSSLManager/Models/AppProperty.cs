@@ -4,12 +4,18 @@ namespace WebAppSSLManager.Models
 {
     public class AppProperty
     {
+        //General properties
         public string Hostname { get; set; }
         public string AzureWebAppName { get; set; }
         public string AzureWebAppResGroup { get; set; }
         public string AzureDnsZoneName { get; set; }
         public string AzureDnsResGroup { get; set; }
 
+        //Slot-specific properties
+        public bool IsSlot { get; set; }
+        public string SlotName { get; set; }
+
+        //Others
         public string HostnameFriendly
             => Hostname.Replace("*.", "");
 
