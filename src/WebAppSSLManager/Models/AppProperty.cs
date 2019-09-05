@@ -17,7 +17,7 @@ namespace WebAppSSLManager.Models
 
         //Others
         public string HostnameFriendly
-            => Hostname.Replace("*.", "");
+            => Hostname.Trim().Replace("*.", "");
 
         public string BaseDomain
         {

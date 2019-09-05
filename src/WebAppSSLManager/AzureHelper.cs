@@ -57,18 +57,18 @@ namespace WebAppSSLManager
 
         public static void InitAppProperty(AppProperty appProperty)
         {
-            _dnsZoneName = appProperty.AzureDnsZoneName;
-            _dnsResGroup = appProperty.AzureDnsResGroup;
-            _webAppName = appProperty.AzureWebAppName;
-            _webAppResGroup = appProperty.AzureWebAppResGroup;
-            _hostname = appProperty.Hostname;
+            _dnsZoneName = appProperty.AzureDnsZoneName.Trim();
+            _dnsResGroup = appProperty.AzureDnsResGroup.Trim();
+            _webAppName = appProperty.AzureWebAppName.Trim();
+            _webAppResGroup = appProperty.AzureWebAppResGroup.Trim();
+            _hostname = appProperty.Hostname.Trim();
             _hostnameFriendly = appProperty.HostnameFriendly;
             _pfxFileName = appProperty.PfxFileName;
 
             if (appProperty.IsSlot)
             {
                 _resourceType = ResourceType.Slot;
-                _slotName = appProperty.SlotName;
+                _slotName = appProperty.SlotName.Trim();
             }
             else
                 _resourceType = ResourceType.WebApp;
@@ -135,7 +135,7 @@ namespace WebAppSSLManager
             switch (_resourceType)
             {
                 case ResourceType.Slot:
-                    var slot = await _azure.WebApps.ListByResourceGroup(_webAppResGroup).Where(w => w.Name == _webAppName.ToLower()).SingleOrDefault().DeploymentSlots.GetByNameAsync(_slotName);
+                    var slot = await _azure.WebApps.ListByResourceGroup(_webAppResGroup).Where(w => w.Name.Equals(_webAppName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault().DeploymentSlots.GetByNameAsync(_slotName);
                     hostnamesInternal = slot.HostNames;
 
                     region = slot.Region;
@@ -144,7 +144,7 @@ namespace WebAppSSLManager
                     break;
                 case ResourceType.WebApp:
                 default:
-                    var webApp = _azure.WebApps.ListByResourceGroup(_webAppResGroup).Where(w => w.Name == _webAppName.ToLower()).SingleOrDefault();
+                    var webApp = _azure.WebApps.ListByResourceGroup(_webAppResGroup).Where(w => w.Name.Equals(_webAppName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault();
                     hostnamesInternal = webApp.HostNames;
 
                     region = webApp.Region;
