@@ -70,6 +70,8 @@ namespace WebAppSSLManager
                 _resourceType = ResourceType.Slot;
                 _slotName = appProperty.SlotName.Trim();
             }
+            else if (appProperty.IsFunctionApp)
+                _resourceType = ResourceType.FunctionApp;
             else
                 _resourceType = ResourceType.WebApp;
         }
@@ -142,6 +144,14 @@ namespace WebAppSSLManager
                     resource = slot;
 
                     break;
+                case ResourceType.FunctionApp:
+                    var functionApp = _azure.AppServices.FunctionApps.ListByResourceGroup(_webAppResGroup).Where(fa => fa.Name.Equals(_webAppName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault();
+                    hostnamesInternal = functionApp.HostNames;
+
+                    region = functionApp.Region;
+                    resource = functionApp;
+
+                    break;
                 case ResourceType.WebApp:
                 default:
                     var webApp = _azure.WebApps.ListByResourceGroup(_webAppResGroup).Where(w => w.Name.Equals(_webAppName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault();
@@ -187,36 +197,50 @@ namespace WebAppSSLManager
                     var subdomain = hostname.Remove(hostname.IndexOf('.'));
                     var domain = hostname.Replace($"{subdomain}.", "");
 
-                    _logger.LogInformation($"       Updating {hostname}");
-
                     switch (_resourceType)
                     {
                         case ResourceType.Slot:
                             var slot = resource as IDeploymentSlot;
+                            _logger.LogInformation($"       Updating {hostname} on WebApp Slot {slot.Name}");
 
                             slot = await slot
-                                .Update()
-                                    .WithThirdPartyHostnameBinding(domain, subdomain)
-                                    .DefineSslBinding()
-                                        .ForHostname(hostname)
-                                        .WithExistingCertificate(certificateThumbPrint)
-                                        .WithSniBasedSsl()
-                                        .Attach()
+                                    .Update()
+                                        .WithThirdPartyHostnameBinding(domain, subdomain)
+                                        .DefineSslBinding()
+                                            .ForHostname(hostname)
+                                            .WithExistingCertificate(certificateThumbPrint)
+                                            .WithSniBasedSsl()
+                                            .Attach()
                                     .ApplyAsync();
+                            break;
+                        case ResourceType.FunctionApp:
+                            var functionApp = resource as IFunctionApp;
+                            _logger.LogInformation($"       Updating {hostname} on FunctionApp {functionApp.Name}");
+
+                            functionApp = await functionApp
+                                            .Update()
+                                                .WithThirdPartyHostnameBinding(domain, subdomain)
+                                                .DefineSslBinding()
+                                                    .ForHostname(hostname)
+                                                    .WithExistingCertificate(certificateThumbPrint)
+                                                    .WithSniBasedSsl()
+                                                    .Attach()
+                                            .ApplyAsync();
                             break;
                         case ResourceType.WebApp:
                         default:
                             var webApp = resource as IWebApp;
+                            _logger.LogInformation($"       Updating {hostname} on WebApp {webApp.Name}");
 
                             webApp = await webApp
-                                    .Update()
-                                    .WithThirdPartyHostnameBinding(domain, subdomain)
-                                    .DefineSslBinding()
-                                        .ForHostname(hostname)
-                                        .WithExistingCertificate(certificateThumbPrint)
-                                        .WithSniBasedSsl()
-                                        .Attach()
-                                    .ApplyAsync();
+                                        .Update()
+                                        .WithThirdPartyHostnameBinding(domain, subdomain)
+                                        .DefineSslBinding()
+                                            .ForHostname(hostname)
+                                            .WithExistingCertificate(certificateThumbPrint)
+                                            .WithSniBasedSsl()
+                                            .Attach()
+                                        .ApplyAsync();
                             break;
                     }
 

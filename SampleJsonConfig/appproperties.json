@@ -21,5 +21,13 @@
     "AzureDnsResGroup": "RESOURCE_GROUP_CONTAINING_THE_DNS",
     "IsSlot": true,
     "SlotName": "YOUR_SLOT_NAME"
+  },
+  {
+    "Hostname": "SUB.YOUR_DOMAIN.EXT", //For FUNCTION APP hostname
+    "AzureWebAppName": "FUNCTIONAPP_RESOURCE_NAME",
+    "AzureWebAppResGroup": "RESOURCE_GROUP_CONTAINING_THE_FUNCTIONAPP",
+    "AzureDnsZoneName": "YOUR_DNS_RESOURCE_NAME",
+    "AzureDnsResGroup": "RESOURCE_GROUP_CONTAINING_THE_DNS",
+    "IsFunctionApp": true
   }
 ] 
