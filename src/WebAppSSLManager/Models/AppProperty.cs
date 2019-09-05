@@ -6,8 +6,8 @@ namespace WebAppSSLManager.Models
     {
         //General properties
         public string Hostname { get; set; }
-        public string AzureWebAppName { get; set; }
-        public string AzureWebAppResGroup { get; set; }
+        public string ResourceName { get; set; } //either the WebApp name or the FunctionApp name
+        public string ResourceResGroup { get; set; } //the resource group container the WebApp or the FunctionApp
         public string AzureDnsZoneName { get; set; }
         public string AzureDnsResGroup { get; set; }
 

@@ -22,8 +22,8 @@ namespace WebAppSSLManager
         private static CloudBlobContainer _blobContainer;
         private static string _dnsZoneName;
         private static string _dnsResGroup;
-        private static string _webAppName;
-        private static string _webAppResGroup;
+        private static string _resourceName;
+        private static string _resourceResGroup;
         private static string _hostname;
         private static string _hostnameFriendly;
         private static string _pfxFileName;
@@ -59,8 +59,8 @@ namespace WebAppSSLManager
         {
             _dnsZoneName = appProperty.AzureDnsZoneName.Trim();
             _dnsResGroup = appProperty.AzureDnsResGroup.Trim();
-            _webAppName = appProperty.AzureWebAppName.Trim();
-            _webAppResGroup = appProperty.AzureWebAppResGroup.Trim();
+            _resourceName = appProperty.ResourceName.Trim();
+            _resourceResGroup = appProperty.ResourceResGroup.Trim();
             _hostname = appProperty.Hostname.Trim();
             _hostnameFriendly = appProperty.HostnameFriendly;
             _pfxFileName = appProperty.PfxFileName;
@@ -142,7 +142,7 @@ namespace WebAppSSLManager
             switch (_resourceType)
             {
                 case ResourceType.WebAppSlot:
-                    var slot = await _azure.WebApps.ListByResourceGroup(_webAppResGroup).Where(w => w.Name.Equals(_webAppName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault().DeploymentSlots.GetByNameAsync(_slotName);
+                    var slot = await _azure.WebApps.ListByResourceGroup(_resourceResGroup).Where(w => w.Name.Equals(_resourceName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault().DeploymentSlots.GetByNameAsync(_slotName);
                     hostnamesInternal = slot.HostNames;
 
                     region = slot.Region;
@@ -150,7 +150,7 @@ namespace WebAppSSLManager
 
                     break;
                 case ResourceType.FunctionApp:
-                    var functionApp = _azure.AppServices.FunctionApps.ListByResourceGroup(_webAppResGroup).Where(fa => fa.Name.Equals(_webAppName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault();
+                    var functionApp = _azure.AppServices.FunctionApps.ListByResourceGroup(_resourceResGroup).Where(fa => fa.Name.Equals(_resourceName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault();
                     hostnamesInternal = functionApp.HostNames;
 
                     region = functionApp.Region;
@@ -158,7 +158,7 @@ namespace WebAppSSLManager
 
                     break;
                 case ResourceType.FunctionAppSlot:
-                    var functionAppSlot = await _azure.AppServices.FunctionApps.ListByResourceGroup(_webAppResGroup).Where(fa => fa.Name.Equals(_webAppName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault().DeploymentSlots.GetByNameAsync(_slotName);
+                    var functionAppSlot = await _azure.AppServices.FunctionApps.ListByResourceGroup(_resourceResGroup).Where(fa => fa.Name.Equals(_resourceName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault().DeploymentSlots.GetByNameAsync(_slotName);
                     hostnamesInternal = functionAppSlot.HostNames;
 
                     region = functionAppSlot.Region;
@@ -167,7 +167,7 @@ namespace WebAppSSLManager
                     break;
                 case ResourceType.WebApp:
                 default:
-                    var webApp = _azure.WebApps.ListByResourceGroup(_webAppResGroup).Where(w => w.Name.Equals(_webAppName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault();
+                    var webApp = _azure.WebApps.ListByResourceGroup(_resourceResGroup).Where(w => w.Name.Equals(_resourceName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault();
                     hostnamesInternal = webApp.HostNames;
 
                     region = webApp.Region;
@@ -184,7 +184,7 @@ namespace WebAppSSLManager
             //Retrieving old certificate, if any
             _logger.LogInformation($"   Retrieving old certificate, if any");
 
-            var oldCertificates = _azure.AppServices.AppServiceCertificates.ListByResourceGroup(_webAppResGroup).Where(c => c.HostNames.Contains(_hostname));
+            var oldCertificates = _azure.AppServices.AppServiceCertificates.ListByResourceGroup(_resourceResGroup).Where(c => c.HostNames.Contains(_hostname));
             _logger.LogInformation($"   Found {oldCertificates.Count()}");
 
             _logger.LogInformation($"   Upoading Certificate");
@@ -194,7 +194,7 @@ namespace WebAppSSLManager
             var certificate = await _azure.AppServices.AppServiceCertificates
                                         .Define($"{_hostname}_{DateTime.UtcNow.ToString("yyyyMMdd")}")
                                         .WithRegion(region)
-                                        .WithExistingResourceGroup(_webAppResGroup)
+                                        .WithExistingResourceGroup(_resourceResGroup)
                                         .WithPfxByteArray(pfxByteArrayContent)
                                         .WithPfxPassword(Settings.CertificatePassword)
                                         .CreateAsync();
