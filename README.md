@@ -1,5 +1,5 @@
 # Azure WebApp SSL Manager
-Azure WebApp SSL Manager is an Azure Function that acquires and manages **free** SSL certificates for Azure Web App hosted applications.
+Azure WebApp SSL Manager is an Azure Function that acquires and manages **free** SSL certificates for Azure Web App and Azure Function App hosted applications.
 
 [![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fn3wt0n%2FAzureWebAppSSLManager%2Fmaster%2FARM%2520Template%2Ftemplate.json) [![Visualize](http://armviz.io/visualizebutton.png)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fn3wt0n%2FAzureWebAppSSLManager%2Fmaster%2FARM%2520Template%2Ftemplate.json)
 
@@ -14,14 +14,21 @@ Azure WebApp SSL Manager is an Azure Function that acquires and manages **free**
 > See the *Application Properties Configuration File* section below for more information
 
 ## Overview
-Azure WebApp SSL Manager is an Azure Function that acquires and manages **free** SSL certificates for Azure Web App hosted applications.
+Azure WebApp SSL Manager is an Azure Function that acquires and manages **free** SSL certificates for applications hosted on Azure Web Apps and Azure Function Apps
 
 Main Tasks perfomed:
-- Order/Renewal of SSL certificates from [Let's Encrypt](https://letsencrypt.org/) free CA
+- Order/Renewal of SSL certificates from [Let's Encrypt](https://letsencrypt.org/) free trusted CA
 - Validation of the order using Azure DNS TXT record
 - Download of the certificates and save them on Azure Blob Storage
-- Installation of the certificates on Azure App Service Web App
-- Association of the certificates to the WebApp hostname bindings
+- Installation of the certificates on Azure App Service Web App or Function App
+- Association of the certificates to the Web App or Function App hostname bindings
+
+## Supported Azure Resources
+Currently this solutions supports:
+- Azure Web Apps
+- Azure Web Apps Slots
+- Azure Function Apps
+- Azure Function Apps Slots
 
 ## Dependencies
 This project depends on few other project:
@@ -30,7 +37,9 @@ This project depends on few other project:
 
 ## Prerequisites
 In order to succesfully use this application, you need a number of Prerequisites.
-- At least one Azure Web App, with at least one custom domain assigned, running in Basic, Standard or Premium tier
+- Either:
+  - At least one Azure Web App, with at least one custom domain assigned, running in Basic, Standard or Premium tier, OR
+  - At least one Azure Function App, with at least one custom domain assigned, running in Consumption tier or in an App Service Basic, Standard or Premium tier
 - A Blob storage account to save the App Properties configuration (see below) and to save the certificates
 - The DNS for the custom domain must be managed via an Azure DNS Zone
 - A Service Principal and it's config values
@@ -90,11 +99,13 @@ Currently AzureWebAppSSLManager retrieves the list of certificates to generate a
 
 An example of the file structure can be found in the *[appproperties.json](../master/SampleJsonConfig/appproperties.json)* example file.
 
-The file needs to be saved in a blob container with name as in the constant "AppPropertiesFileName" of the *[Constants.cs](../master/src/WebAppSSLManager/Models/Contants.cs)* class;
+The file needs to be saved in a blob container with name as in the constant "AppPropertiesFileName" of the *[Constants.cs](../master/src/WebAppSSLManager/Models/Contants.cs)* class.
 
 ## Limitations
-Currently an instance of AzureWebAppSSLManager can manage Web Apps in a single subscriptiont.
-If you need/want to manage App Service Web Apps in multiple subscriptions, you would need to deploy one instance of the function per subscription.
+Currently an instance of AzureWebAppSSLManager can manage Web Apps and Function Apps in a single subscriptiont.
+If you need/want to manage App Service Web Apps  and Function Apps in multiple subscriptions, you would need to deploy one instance of this Function per subscription.
 
 ## Support ###
 If you have any issue with this project please let me know through the [Issues page](https://github.com/n3wt0n/AzureWebAppSSLManager/issues) and I'll try to fix the problem as soon as possible!
+
+If you want to contribute to this project, feel free to create a Pull Request and I will review it.
