@@ -1,6 +1,7 @@
 ﻿using Certes;
 using Certes.Acme;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Org.BouncyCastle.Crypto.Tls;
 using System;
 using System.Linq;
@@ -21,6 +22,8 @@ namespace WebAppSSLManager
         private static string _pemFileName;
 
         private static AcmeContext _acme;
+
+        private static CsrInfo _certinfo;
 
         public static async Task InitAsync(ILogger logger, CertificateMode certificateMode)
         {
@@ -54,6 +57,27 @@ namespace WebAppSSLManager
 
             _logger.LogInformation("    Account set");
             _logger.LogInformation(Environment.NewLine);
+
+            _logger.LogInformation("Loading Certificate Info for Issuance");
+            _certinfo = await BuildCertificaeInfoAsync();
+            _logger.LogInformation("    Certificate Info loaded");
+            _logger.LogInformation(Environment.NewLine);
+        }
+
+        private static async Task<CsrInfo> BuildCertificaeInfoAsync()
+        {
+            try
+            {
+                var certInfoStr = await AzureHelper.ReadFileFromBlobStorageToStringAsync(Constants.CertInfoFileName);
+                var certInfo = JsonConvert.DeserializeObject<CsrInfo>(certInfoStr);
+                return certInfo;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while building/deserializing Certificte Info file. Cannot proceed.");
+                await MailHelper.SendEmailForErrorAsync(ex, "Error while building/deserializing Certificte Info file. Cannot proceed.");
+                throw;
+            }
         }
 
         public static void InitAppProperty(AppProperty appProperty)
@@ -114,14 +138,9 @@ namespace WebAppSSLManager
 
                 _logger.LogInformation($"   Downloading the certificate");
                 var privateKey = KeyFactory.NewKey(KeyAlgorithm.ES256);
-                var cert = await order.Generate(new CsrInfo
-                {
-                    CountryName = "HK",
-                    State = "Hong Kong",
-                    Locality = "Hong Kong",
-                    Organization = "DBTek",
-                    CommonName = _hostname,
-                }, privateKey);
+
+                _certinfo.CommonName = _hostname;
+                var cert = await order.Generate(_certinfo, privateKey);
 
                 _logger.LogInformation($"   Exporting full chain certification");
                 var certPem = cert.ToPem();
