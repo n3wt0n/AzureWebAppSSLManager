@@ -22,8 +22,8 @@ namespace WebAppSSLManager
         private static CloudBlobContainer _blobContainer;
         private static string _dnsZoneName;
         private static string _dnsResGroup;
-        private static string _webAppName;
-        private static string _webAppResGroup;
+        private static string _resourceName;
+        private static string _resourceResGroup;
         private static string _hostname;
         private static string _hostnameFriendly;
         private static string _pfxFileName;
@@ -59,17 +59,24 @@ namespace WebAppSSLManager
         {
             _dnsZoneName = appProperty.AzureDnsZoneName.Trim();
             _dnsResGroup = appProperty.AzureDnsResGroup.Trim();
-            _webAppName = appProperty.AzureWebAppName.Trim();
-            _webAppResGroup = appProperty.AzureWebAppResGroup.Trim();
+            _resourceName = appProperty.ResourceName.Trim();
+            _resourceResGroup = appProperty.ResourceResGroup.Trim();
             _hostname = appProperty.Hostname.Trim();
             _hostnameFriendly = appProperty.HostnameFriendly;
             _pfxFileName = appProperty.PfxFileName;
 
-            if (appProperty.IsSlot)
+            if (appProperty.IsFunctionApp && appProperty.IsSlot)
             {
-                _resourceType = ResourceType.Slot;
+                _resourceType = ResourceType.FunctionAppSlot;
                 _slotName = appProperty.SlotName.Trim();
             }
+            else if (appProperty.IsSlot)
+            {
+                _resourceType = ResourceType.WebAppSlot;
+                _slotName = appProperty.SlotName.Trim();
+            }
+            else if (appProperty.IsFunctionApp)
+                _resourceType = ResourceType.FunctionApp;
             else
                 _resourceType = ResourceType.WebApp;
         }
@@ -134,17 +141,33 @@ namespace WebAppSSLManager
 
             switch (_resourceType)
             {
-                case ResourceType.Slot:
-                    var slot = await _azure.WebApps.ListByResourceGroup(_webAppResGroup).Where(w => w.Name.Equals(_webAppName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault().DeploymentSlots.GetByNameAsync(_slotName);
+                case ResourceType.WebAppSlot:
+                    var slot = await _azure.WebApps.ListByResourceGroup(_resourceResGroup).Where(w => w.Name.Equals(_resourceName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault().DeploymentSlots.GetByNameAsync(_slotName);
                     hostnamesInternal = slot.HostNames;
 
                     region = slot.Region;
                     resource = slot;
 
                     break;
+                case ResourceType.FunctionApp:
+                    var functionApp = _azure.AppServices.FunctionApps.ListByResourceGroup(_resourceResGroup).Where(fa => fa.Name.Equals(_resourceName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault();
+                    hostnamesInternal = functionApp.HostNames;
+
+                    region = functionApp.Region;
+                    resource = functionApp;
+
+                    break;
+                case ResourceType.FunctionAppSlot:
+                    var functionAppSlot = await _azure.AppServices.FunctionApps.ListByResourceGroup(_resourceResGroup).Where(fa => fa.Name.Equals(_resourceName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault().DeploymentSlots.GetByNameAsync(_slotName);
+                    hostnamesInternal = functionAppSlot.HostNames;
+
+                    region = functionAppSlot.Region;
+                    resource = functionAppSlot;
+
+                    break;
                 case ResourceType.WebApp:
                 default:
-                    var webApp = _azure.WebApps.ListByResourceGroup(_webAppResGroup).Where(w => w.Name.Equals(_webAppName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault();
+                    var webApp = _azure.WebApps.ListByResourceGroup(_resourceResGroup).Where(w => w.Name.Equals(_resourceName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault();
                     hostnamesInternal = webApp.HostNames;
 
                     region = webApp.Region;
@@ -161,7 +184,7 @@ namespace WebAppSSLManager
             //Retrieving old certificate, if any
             _logger.LogInformation($"   Retrieving old certificate, if any");
 
-            var oldCertificates = _azure.AppServices.AppServiceCertificates.ListByResourceGroup(_webAppResGroup).Where(c => c.HostNames.Contains(_hostname));
+            var oldCertificates = _azure.AppServices.AppServiceCertificates.ListByResourceGroup(_resourceResGroup).Where(c => c.HostNames.Contains(_hostname));
             _logger.LogInformation($"   Found {oldCertificates.Count()}");
 
             _logger.LogInformation($"   Upoading Certificate");
@@ -171,7 +194,7 @@ namespace WebAppSSLManager
             var certificate = await _azure.AppServices.AppServiceCertificates
                                         .Define($"{_hostname}_{DateTime.UtcNow.ToString("yyyyMMdd")}")
                                         .WithRegion(region)
-                                        .WithExistingResourceGroup(_webAppResGroup)
+                                        .WithExistingResourceGroup(_resourceResGroup)
                                         .WithPfxByteArray(pfxByteArrayContent)
                                         .WithPfxPassword(Settings.CertificatePassword)
                                         .CreateAsync();
@@ -187,36 +210,64 @@ namespace WebAppSSLManager
                     var subdomain = hostname.Remove(hostname.IndexOf('.'));
                     var domain = hostname.Replace($"{subdomain}.", "");
 
-                    _logger.LogInformation($"       Updating {hostname}");
-
                     switch (_resourceType)
                     {
-                        case ResourceType.Slot:
+                        case ResourceType.WebAppSlot:
                             var slot = resource as IDeploymentSlot;
+                            _logger.LogInformation($"       Updating {hostname} on WebApp Slot {slot.Name}");
 
                             slot = await slot
-                                .Update()
-                                    .WithThirdPartyHostnameBinding(domain, subdomain)
-                                    .DefineSslBinding()
-                                        .ForHostname(hostname)
-                                        .WithExistingCertificate(certificateThumbPrint)
-                                        .WithSniBasedSsl()
-                                        .Attach()
+                                    .Update()
+                                        .WithThirdPartyHostnameBinding(domain, subdomain)
+                                        .DefineSslBinding()
+                                            .ForHostname(hostname)
+                                            .WithExistingCertificate(certificateThumbPrint)
+                                            .WithSniBasedSsl()
+                                            .Attach()
                                     .ApplyAsync();
+                            break;
+                        case ResourceType.FunctionApp:
+                            var functionApp = resource as IFunctionApp;
+                            _logger.LogInformation($"       Updating {hostname} on FunctionApp {functionApp.Name}");
+
+                            functionApp = await functionApp
+                                            .Update()
+                                                .WithThirdPartyHostnameBinding(domain, subdomain)
+                                                .DefineSslBinding()
+                                                    .ForHostname(hostname)
+                                                    .WithExistingCertificate(certificateThumbPrint)
+                                                    .WithSniBasedSsl()
+                                                    .Attach()
+                                            .ApplyAsync();
+                            break;
+                        case ResourceType.FunctionAppSlot:
+                            var functionAppSlot = resource as IFunctionDeploymentSlot;
+                            _logger.LogInformation($"       Updating {hostname} on FunctionApp Slot {functionAppSlot.Name}");
+
+                            functionAppSlot = await functionAppSlot
+                                                .Update()
+                                                    .WithThirdPartyHostnameBinding(domain, subdomain)
+                                                    .DefineSslBinding()
+                                                        .ForHostname(hostname)
+                                                        .WithExistingCertificate(certificateThumbPrint)
+                                                        .WithSniBasedSsl()
+                                                        .Attach()
+                                                .ApplyAsync();
                             break;
                         case ResourceType.WebApp:
                         default:
                             var webApp = resource as IWebApp;
+                            _logger.LogInformation($"       Updating {hostname} on WebApp {webApp.Name}");
 
                             webApp = await webApp
-                                    .Update()
-                                    .WithThirdPartyHostnameBinding(domain, subdomain)
-                                    .DefineSslBinding()
-                                        .ForHostname(hostname)
-                                        .WithExistingCertificate(certificateThumbPrint)
-                                        .WithSniBasedSsl()
-                                        .Attach()
-                                    .ApplyAsync();
+                                        .Update()
+                                        .WithThirdPartyHostnameBinding(domain, subdomain)
+                                        .DefineSslBinding()
+                                            .ForHostname(hostname)
+                                            .WithExistingCertificate(certificateThumbPrint)
+                                            .WithSniBasedSsl()
+                                            .Attach()
+                                        .ApplyAsync();
                             break;
                     }
 
