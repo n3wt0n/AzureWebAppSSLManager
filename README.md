@@ -1,6 +1,6 @@
 # Azure WebApp SSL Manager
 
-![CI Badge](https://github.com/n3wt0n/AzureWebAppSSLManager/workflows/CI/badge.svg)  
+![CI Badge](https://github.com/n3wt0n/AzureWebAppSSLManager/workflows/CI/badge.svg)
 [![License](https://img.shields.io/github/license/n3wt0n/AzureWebAppSSLManager.svg)](https://github.com/n3wt0n/AzureWebAppSSLManager/blob/master/LICENSE)
 
 Azure WebApp SSL Manager is an Azure Function that acquires and manages **free** SSL certificates for Azure Web App and Azure Function App hosted applications.
