@@ -176,9 +176,9 @@ namespace WebAppSSLManager
                     break;
             }
 
-            if (_hostname.StartsWith("*."))
-                hostnamesList.AddRange(hostnamesInternal.Where(h => h.Contains(_hostnameFriendly)));
-            else
+            //if (_hostname.StartsWith("*."))
+            //    hostnamesList.AddRange(hostnamesInternal.Where(h => h.Contains(_hostnameFriendly)));
+            //else
                 hostnamesList.Add(_hostname);
 
             //Retrieving old certificate, if any
@@ -207,7 +207,7 @@ namespace WebAppSSLManager
             {
                 try
                 {
-                    var subdomain = hostname.Remove(hostname.IndexOf('.'));
+                    var subdomain = hostname.Remove(hostname.IndexOf('.', 0));
                     var domain = hostname.Replace($"{subdomain}.", "");
 
                     switch (_resourceType)
