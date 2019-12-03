@@ -39,7 +39,7 @@ namespace WebAppSSLManager
 
             if (appProperties != null && appProperties.Any())
             {
-                await CertificatesHelper.InitAsync(logger, CertificateMode.Production); //Change this to Staging for development/test purposes
+                await CertificatesHelper.InitAsync(logger, Settings.UseStaging ? CertificateMode.Staging : CertificateMode.Production);
 
                 foreach (var appProperty in appProperties)
                 {

@@ -15,6 +15,7 @@ namespace WebAppSSLManager.Models
         public static string CertificateOwnerEmail { get; private set; }
         public static string CertificatePassword { get; private set; }
         public static string EmailSender { get; private set; }
+        public static bool UseStaging { get; private set; }
 
         public static void Init(ILogger logger)
         {
@@ -75,6 +76,9 @@ namespace WebAppSSLManager.Models
                 _logger.LogWarning("EmailSender environment variable is null. Reverting to default");
                 EmailSender = Constants.DefaultEmailSender;
             }
+
+            bool.TryParse(Environment.GetEnvironmentVariable("UseStaging"), out var useStaging);
+            UseStaging = useStaging;
         }
     }
 
