@@ -31,6 +31,9 @@
         },
         "emailSender": {
             "type": "string"
+        },
+        "useStaging": {
+            "type": "string"
         }
     },
     "variables": {  
@@ -165,6 +168,10 @@
                         {
                             "name": "EmailSender",
                             "value": "[parameters('emailSender')]"
+                        },
+                        {
+                            "name": "UseStaging",
+                            "value": "[parameters('useStaging')]"
                         }
                     ]
                 },

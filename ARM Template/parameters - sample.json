@@ -31,6 +31,9 @@
         },
         "emailSender": {
             "value": "SERVICE@SERVICEEMAILDOMAIN.EXT"
+        },
+        "useStaging": {
+            "value": "False"
         }
     }
 }
