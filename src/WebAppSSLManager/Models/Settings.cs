@@ -77,11 +77,8 @@ namespace WebAppSSLManager.Models
                 EmailSender = Constants.DefaultEmailSender;
             }
 
-            var hasValue = bool.TryParse(Environment.GetEnvironmentVariable("UseStaging"), out var useStaging);
-            if (hasValue)
-            {
-                UseStaging = useStaging;
-            }
+            bool.TryParse(Environment.GetEnvironmentVariable("UseStaging"), out var useStaging);
+            UseStaging = useStaging;
         }
     }
 
