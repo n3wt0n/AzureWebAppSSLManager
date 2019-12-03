@@ -108,7 +108,7 @@ They can be created in the Azure Web App configuration section when deployed, or
     "AzureStorageAccountConnectionString": "AZURE_STORAGE_FULL_CONNECTION_STRING",
     "SendGridKey": "SENDGRID_KEY",
     "EmailSender": "SENDER@YOURSERVICE.EXT",
-	"UseStaging": "True"
+    "UseStaging": "True"
 ```
 
 The config settings for the Service Principal are the ones from the output of the Service Principal creation above.
