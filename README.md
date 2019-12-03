@@ -134,6 +134,9 @@ The file needs to be saved in a blob container with name as in the constant "Cer
 Currently an instance of AzureWebAppSSLManager can manage Web Apps and Function Apps in a single subscriptiont.
 If you need/want to manage App Service Web Apps  and Function Apps in multiple subscriptions, you would need to deploy one instance of this Function per subscription.
 
+You cannot generate certificates for a root domain (xxxxx.yy).  
+This is due to a limitation of Azure DNS which doesn't allow you to create a CNAME record for a root domain. 
+
 ## Support
 
 If you have any issue with this project please let me know through the [Issues page](https://github.com/n3wt0n/AzureWebAppSSLManager/issues) and I'll try to fix the problem as soon as possible!
