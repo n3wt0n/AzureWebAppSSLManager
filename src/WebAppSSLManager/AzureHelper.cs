@@ -207,9 +207,6 @@ namespace WebAppSSLManager
             {
                 try
                 {
-                    var subdomain = hostname.Remove(hostname.IndexOf('.'));
-                    var domain = hostname.Replace($"{subdomain}.", "");
-
                     switch (_resourceType)
                     {
                         case ResourceType.WebAppSlot:
@@ -218,7 +215,6 @@ namespace WebAppSSLManager
 
                             slot = await slot
                                     .Update()
-                                        .WithThirdPartyHostnameBinding(domain, subdomain)
                                         .DefineSslBinding()
                                             .ForHostname(hostname)
                                             .WithExistingCertificate(certificateThumbPrint)
@@ -232,7 +228,6 @@ namespace WebAppSSLManager
 
                             functionApp = await functionApp
                                             .Update()
-                                                .WithThirdPartyHostnameBinding(domain, subdomain)
                                                 .DefineSslBinding()
                                                     .ForHostname(hostname)
                                                     .WithExistingCertificate(certificateThumbPrint)
@@ -246,7 +241,6 @@ namespace WebAppSSLManager
 
                             functionAppSlot = await functionAppSlot
                                                 .Update()
-                                                    .WithThirdPartyHostnameBinding(domain, subdomain)
                                                     .DefineSslBinding()
                                                         .ForHostname(hostname)
                                                         .WithExistingCertificate(certificateThumbPrint)
@@ -261,7 +255,6 @@ namespace WebAppSSLManager
 
                             webApp = await webApp
                                         .Update()
-                                        .WithThirdPartyHostnameBinding(domain, subdomain)
                                         .DefineSslBinding()
                                             .ForHostname(hostname)
                                             .WithExistingCertificate(certificateThumbPrint)
