@@ -133,7 +133,7 @@ The file needs to be saved in a blob container with name as in the constant "Cer
 
 ## Limitations
 
-Currently an instance of AzureWebAppSSLManager can manage Web Apps and Function Apps in a single subscriptiont.
+Currently an instance of AzureWebAppSSLManager can manage Web Apps and Function Apps in a single subscription.
 If you need/want to manage App Service Web Apps  and Function Apps in multiple subscriptions, you would need to deploy one instance of this Function per subscription.
 
 ## Support
