@@ -57,6 +57,8 @@ In order to succesfully use this application, you need a number of Prerequisites
 - A Service Principal and it's config values
 - A SendGrid account and a valid SendGrid API Key
 
+> Remember to bind all the hostnames you want to add certificates to to the App Service in advance.
+
 #### Service Principal
 
 You need to have a Service Principal to be able to performa management operations on Azure, like uploading the certificate to the App Service or managing the DNS Zone.
