@@ -187,7 +187,7 @@ namespace WebAppSSLManager
             var oldCertificates = _azure.AppServices.AppServiceCertificates.ListByResourceGroup(_resourceResGroup).Where(c => c.HostNames.Contains(_hostname));
             _logger.LogInformation($"   Found {oldCertificates.Count()}");
 
-            _logger.LogInformation($"   Upoading Certificate");
+            _logger.LogInformation($"   Uploading Certificate");
 
             var pfxByteArrayContent = await ReadFileFromBlobStorageToByteArrayAsync(_pfxFileName);
 
