@@ -85,7 +85,7 @@ namespace WebAppSSLManager
         {
             try
             {
-                _logger.LogInformation($"Updating DNS zone by adding the {name} TXT record...");
+                _logger.LogInformation($"Updating DNS zone by adding the '{name}' TXT record...");
 
                 var rootDnsZone = _azure.DnsZones.ListByResourceGroup(_dnsResGroup).Where(z => z.Name == _dnsZoneName.ToLower()).SingleOrDefault();
                 rootDnsZone = await rootDnsZone.Update()
@@ -95,12 +95,12 @@ namespace WebAppSSLManager
                                 .Attach()
                             .ApplyAsync();
 
-                _logger.LogInformation($"   Added TXT record {name} to DNS zone {rootDnsZone.Name}");
+                _logger.LogInformation($"   Added TXT record '{name}' to DNS zone {rootDnsZone.Name}");
                 _logger.LogInformation(Environment.NewLine);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error while creating TXT record {name} to DNS zone {_dnsResGroup}");
+                _logger.LogError(ex, $"Error while creating TXT record '{name}' to DNS zone {_dnsResGroup}");
                 throw;
             }
         }
@@ -109,19 +109,19 @@ namespace WebAppSSLManager
         {
             try
             {
-                _logger.LogInformation($"Updating DNS zone by Removing the {name} TXT record...");
+                _logger.LogInformation($"Updating DNS zone by Removing the '{name}' TXT record...");
 
                 var rootDnsZone = _azure.DnsZones.ListByResourceGroup(_dnsResGroup).Where(z => z.Name == _dnsZoneName.ToLower()).SingleOrDefault();
                 rootDnsZone = await rootDnsZone.Update()
                                 .WithoutTxtRecordSet(name)
                                 .ApplyAsync();
 
-                _logger.LogInformation($"   Removed TXT record {name} to DNS zone {rootDnsZone.Name}");
+                _logger.LogInformation($"   Removed TXT record '{name}' to DNS zone {rootDnsZone.Name}");
                 _logger.LogInformation(Environment.NewLine);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error while removing TXT record {name} to DNS zone {_dnsResGroup}");
+                _logger.LogError(ex, $"Error while removing TXT record '{name}' to DNS zone {_dnsResGroup}");
                 throw;
             }
         }
@@ -211,7 +211,7 @@ namespace WebAppSSLManager
                     {
                         case ResourceType.WebAppSlot:
                             var slot = resource as IDeploymentSlot;
-                            _logger.LogInformation($"       Updating {hostname} on WebApp Slot {slot.Name}");
+                            _logger.LogInformation($"       Updating '{hostname}' on WebApp Slot '{slot.Name}'");
 
                             slot = await slot
                                     .Update()
@@ -224,7 +224,7 @@ namespace WebAppSSLManager
                             break;
                         case ResourceType.FunctionApp:
                             var functionApp = resource as IFunctionApp;
-                            _logger.LogInformation($"       Updating {hostname} on FunctionApp {functionApp.Name}");
+                            _logger.LogInformation($"       Updating '{hostname}' on FunctionApp '{functionApp.Name}'");
 
                             functionApp = await functionApp
                                             .Update()
@@ -237,7 +237,7 @@ namespace WebAppSSLManager
                             break;
                         case ResourceType.FunctionAppSlot:
                             var functionAppSlot = resource as IFunctionDeploymentSlot;
-                            _logger.LogInformation($"       Updating {hostname} on FunctionApp Slot {functionAppSlot.Name}");
+                            _logger.LogInformation($"       Updating '{hostname}' on FunctionApp Slot '{functionAppSlot.Name}'");
 
                             functionAppSlot = await functionAppSlot
                                                 .Update()
@@ -251,7 +251,7 @@ namespace WebAppSSLManager
                         case ResourceType.WebApp:
                         default:
                             var webApp = resource as IWebApp;
-                            _logger.LogInformation($"       Updating {hostname} on WebApp {webApp.Name}");
+                            _logger.LogInformation($"       Updating '{hostname}' on WebApp '{webApp.Name}'");
 
                             webApp = await webApp
                                         .Update()
@@ -268,17 +268,17 @@ namespace WebAppSSLManager
                 }
                 catch (Microsoft.Azure.Management.AppService.Fluent.Models.DefaultErrorResponseException ex)
                 {
-                    _logger.LogError(ex, $"Error updating binding for {hostname} with certificate {certificateThumbPrint}");
+                    _logger.LogError(ex, $"Error updating binding for '{hostname}' with certificate '{certificateThumbPrint}'");
                     throw;
                 }
                 catch (Microsoft.Rest.TransientFaultHandling.HttpRequestWithStatusException ex2)
                 {
-                    _logger.LogError(ex2, $"Error updating binding for {hostname} with certificate {certificateThumbPrint}");
+                    _logger.LogError(ex2, $"Error updating binding for '{hostname}' with certificate '{certificateThumbPrint}'");
                     throw;
                 }
                 catch (Exception ex3)
                 {
-                    _logger.LogError(ex3, $"Error updating binding for {hostname} with certificate {certificateThumbPrint}");
+                    _logger.LogError(ex3, $"Error updating binding for '{hostname}' with certificate '{certificateThumbPrint}'");
                     throw;
                 }
             }
@@ -293,10 +293,10 @@ namespace WebAppSSLManager
                     if (oldCert.Thumbprint != certificate.Thumbprint)
                     {
                         await _azure.AppServices.AppServiceCertificates.DeleteByIdAsync(oldCert.Id);
-                        _logger.LogInformation($"       Removed old {oldCert.Name} certificate");
+                        _logger.LogInformation($"       Removed old '{oldCert.Name}' certificate");
                     }
                     else
-                        _logger.LogWarning($"       Can't remove {oldCert.Name} certificate because has the same Thumbprint than current one.");
+                        _logger.LogWarning($"       Can't remove '{oldCert.Name}' certificate because has the same Thumbprint than current one.");
                 }
             }
 
