@@ -57,7 +57,7 @@ namespace WebAppSSLManager.Models
             }
 
             CertificatePassword = Environment.GetEnvironmentVariable("CertificatePassword");
-            if (string.IsNullOrWhiteSpace(AzureStorageAccountConnectionString))
+            if (string.IsNullOrWhiteSpace(CertificatePassword))
             {
                 _logger.LogWarning("CertificatePassword environment variable is null. Reverting to default password");
                 CertificatePassword = Constants.DefaultCertificatePassword;
