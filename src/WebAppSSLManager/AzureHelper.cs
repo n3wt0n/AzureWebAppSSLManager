@@ -24,6 +24,7 @@ namespace WebAppSSLManager
         private static string _dnsResGroup;
         private static string _resourceName;
         private static string _resourceResGroup;
+        private static string _resourcePlanResGroup;
         private static string _hostname;
         private static string _hostnameFriendly;
         private static string _pfxFileName;
@@ -61,6 +62,7 @@ namespace WebAppSSLManager
             _dnsResGroup = appProperty.AzureDnsResGroup.Trim();
             _resourceName = appProperty.ResourceName.Trim();
             _resourceResGroup = appProperty.ResourceResGroup.Trim();
+            _resourcePlanResGroup = appProperty.PlanResourceGroup.Trim();
             _hostname = appProperty.Hostname.Trim();
             _hostnameFriendly = appProperty.HostnameFriendly;
             _pfxFileName = appProperty.PfxFileName;
@@ -184,7 +186,7 @@ namespace WebAppSSLManager
             //Retrieving old certificate, if any
             _logger.LogInformation($"   Retrieving old certificate, if any");
 
-            var oldCertificates = _azure.AppServices.AppServiceCertificates.ListByResourceGroup(_resourceResGroup).Where(c => c.HostNames.Contains(_hostname));
+            var oldCertificates = _azure.AppServices.AppServiceCertificates.ListByResourceGroup(_resourcePlanResGroup).Where(c => c.HostNames.Contains(_hostname));
             _logger.LogInformation($"   Found {oldCertificates.Count()}");
 
             _logger.LogInformation($"   Uploading Certificate");
@@ -194,7 +196,7 @@ namespace WebAppSSLManager
             var certificate = await _azure.AppServices.AppServiceCertificates
                                         .Define($"{_hostname}_{DateTime.UtcNow.ToString("yyyyMMdd")}")
                                         .WithRegion(region)
-                                        .WithExistingResourceGroup(_resourceResGroup)
+                                        .WithExistingResourceGroup(_resourcePlanResGroup)
                                         .WithPfxByteArray(pfxByteArrayContent)
                                         .WithPfxPassword(Settings.CertificatePassword)
                                         .CreateAsync();

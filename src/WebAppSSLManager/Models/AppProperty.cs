@@ -8,6 +8,7 @@ namespace WebAppSSLManager.Models
         public string Hostname { get; set; }
         public string ResourceName { get; set; } //either the WebApp name or the FunctionApp name
         public string ResourceResGroup { get; set; } //the resource group container the WebApp or the FunctionApp
+        public string ResourcePlanResGroup { get; set; }
         public string AzureDnsZoneName { get; set; }
         public string AzureDnsResGroup { get; set; }
 
@@ -21,6 +22,8 @@ namespace WebAppSSLManager.Models
         //Others
         public string HostnameFriendly
             => Hostname.Trim().Replace("*.", "");
+
+        public string PlanResourceGroup => ResourcePlanResGroup ?? ResourceResGroup;
 
         public string BaseDomain
         {
