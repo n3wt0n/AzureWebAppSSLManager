@@ -22,21 +22,8 @@ namespace WebAppSSLManager.Models
         public string HostnameFriendly
             => Hostname.Trim().Replace("*.", "");
 
-        public string BaseDomain
-        {
-            get
-            {
-                var basedomain = HostnameFriendly;
-
-                while (basedomain.Count(f => f == '.') > 1)
-                {
-                    basedomain = basedomain.Substring(basedomain.IndexOf('.') + 1);
-                }
-
-                return basedomain;
-            }
-        }
-
+        public string BaseDomain => AzureDnsZoneName;
+  
         public string PfxFileName
             => $"{HostnameFriendly}.pfx";
 
