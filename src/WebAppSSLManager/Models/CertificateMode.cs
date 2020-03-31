@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace WebAppSSLManager.Models
+﻿namespace WebAppSSLManager.Models
 {
     public enum CertificateMode
     {

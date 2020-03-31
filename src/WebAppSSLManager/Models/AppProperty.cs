@@ -25,7 +25,8 @@ namespace WebAppSSLManager.Models
 
         public string BaseDomain => AzureDnsZoneName;
   
-        public string PlanResourceGroup => ResourcePlanResGroup ?? ResourceResGroup; // Use the resource group of the AppService or FunctionApp if it has not explictly been set for the AppServicePlan
+        public string PlanResourceGroup 
+            => ResourcePlanResGroup ?? ResourceResGroup; // Use the resource group of the AppService or FunctionApp if it has not explictly been set for the AppServicePlan
         
         public string PfxFileName
             => $"{HostnameFriendly}.pfx";

@@ -81,6 +81,4 @@ namespace WebAppSSLManager.Models
             UseStaging = useStaging;
         }
     }
-
-
 }
