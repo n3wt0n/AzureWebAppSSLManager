@@ -39,5 +39,13 @@
     "IsFunctionApp": true,
     "IsSlot": true,
     "SlotName": "SLOT_NAME"
+  },
+  {
+    "Hostname": "SUB.YOUR_DOMAIN.EXT",
+    "ResourceName": "WEBAPP_RESOURCE_NAME",
+    "ResourceResGroup": "RESOURCE_GROUP_CONTAINING_THE_WEBAPP",
+    "ResourcePlanResGroup": "RESOURCE_GROUP_CONTAINING_THE_APPSERVICEPLAN", //For when the AppService belongs to an AppServicePlan in a different ResourceGroup (works for all types of resource and certificate)
+    "AzureDnsZoneName": "DNS_RESOURCE_NAME",
+    "AzureDnsResGroup": "RESOURCE_GROUP_CONTAINING_THE_DNS"
   }
 ] 
