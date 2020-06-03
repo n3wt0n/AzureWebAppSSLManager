@@ -21,9 +21,10 @@ namespace WebAppSSLManager.Models
 
         //Others
         public string HostnameFriendly
-            => Hostname.Trim().Replace("*.", "");
+            => Hostname.Trim().Replace("*.", "").ToLower();
 
-        public string BaseDomain => AzureDnsZoneName;
+        public string BaseDomain 
+            => AzureDnsZoneName.ToLower();
   
         public string PlanResourceGroup 
             => ResourcePlanResGroup ?? ResourceResGroup; // Use the resource group of the AppService or FunctionApp if it has not explictly been set for the AppServicePlan
