@@ -1,6 +1,6 @@
 ---
 name: Question
-about: Describe this issue template's purpose here.
+about: Aska general question about the project.
 title: ''
 labels: question
 assignees: ''
