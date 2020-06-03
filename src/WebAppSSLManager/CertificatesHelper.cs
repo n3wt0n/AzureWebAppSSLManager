@@ -37,6 +37,8 @@ namespace WebAppSSLManager
             if (Settings.UseStaging)
                 accountKeyFileName = "staging" + accountKeyFileName;
 
+            IAccountContext account;
+
             if (await AzureHelper.CheckIfFileExistsBlobStorageAsync(accountKeyFileName))
             {
                 _logger.LogInformation("        Retrieving existing account");
@@ -45,20 +47,20 @@ namespace WebAppSSLManager
                 var pemKey = await AzureHelper.ReadFileFromBlobStorageToStringAsync(accountKeyFileName);
                 var accountKey = KeyFactory.FromPem(pemKey);
                 _acme = new AcmeContext(certificateMode == CertificateMode.Production ? WellKnownServers.LetsEncryptV2 : WellKnownServers.LetsEncryptStagingV2, accountKey);
-                var account = await _acme.Account();
+                account = await _acme.Account();
             }
             else
             {
                 _logger.LogInformation("        Creating new account");
                 _acme = new AcmeContext(certificateMode == CertificateMode.Production ? WellKnownServers.LetsEncryptV2 : WellKnownServers.LetsEncryptStagingV2);
-                var account = await _acme.NewAccount(Settings.CertificateOwnerEmail, true);
+                account = await _acme.NewAccount(Settings.CertificateOwnerEmail, true);
 
                 // Save the account key for later use
                 var pemKey = _acme.AccountKey.ToPem();
                 await AzureHelper.SaveFileToBlobStorageAsync(accountKeyFileName, pemKey);
             }
 
-            _logger.LogInformation("    Account set");
+            _logger.LogInformation($"    Account set - { account.Location }");
             _logger.LogInformation(Environment.NewLine);
 
             _logger.LogInformation("Loading Certificate Info for Issuance");
