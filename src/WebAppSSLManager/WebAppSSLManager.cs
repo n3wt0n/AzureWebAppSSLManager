@@ -14,9 +14,9 @@ namespace WebAppSSLManager
     {
         private static ILogger _logger;
 
-        //Runs once per month, on the 1st day of the month at 12 midnight
+        //Gets its trigger schedule from the WebAppSSLManager configuration setting or environment variable
         [FunctionName("WebAppSSLManager")]
-        public static async Task Run([TimerTrigger("0 0 0 1 * *"
+        public static async Task Run([TimerTrigger("%WebAppSSLManager-Trigger%"
 #if DEBUG
             , RunOnStartup=true
 #endif
@@ -37,6 +37,8 @@ namespace WebAppSSLManager
             var errors = new List<(string hostname, string errorMessage)>();
             var appProperties = await BuildAppPropertiesListAsync();
 
+            int certsCreated = 0;
+
             if (appProperties != null && appProperties.Any())
             {
                 await CertificatesHelper.InitAsync(logger, Settings.UseStaging ? CertificateMode.Staging : CertificateMode.Production);
@@ -48,9 +50,13 @@ namespace WebAppSSLManager
 
                     try
                     {
+                        
                         //Request certificate and install it if all is ok
-                        if (await CertificatesHelper.GetCertificateAsync())
+                        if (await AzureHelper.NeedsNewCertificateAsync() && await CertificatesHelper.GetCertificateAsync())
+                        {
                             await AzureHelper.AddCertificateAsync();
+                            certsCreated++;
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -58,6 +64,12 @@ namespace WebAppSSLManager
                         logger.LogError(ex, message);
                         await MailHelper.SendEmailForErrorAsync(ex, message);
                         errors.Add((hostname: appProperty.Hostname, errorMessage: ex.Message));
+                    }
+
+                    if(Settings.BatchSize > 0 && certsCreated >= Settings.BatchSize)
+                    {
+                        logger.LogInformation($"Maximum number of certificates ({Settings.BatchSize}) generated this run - exiting.");
+                        break;
                     }
                 }
             }

@@ -16,6 +16,8 @@ namespace WebAppSSLManager.Models
         public static string CertificatePassword { get; private set; }
         public static string EmailSender { get; private set; }
         public static bool UseStaging { get; private set; }
+        public static int BatchSize { get; private set; }
+        public static TimeSpan TimeBeforeExpiryToRenew { get; private set; }
 
         public static void Init(ILogger logger)
         {
@@ -77,8 +79,28 @@ namespace WebAppSSLManager.Models
                 EmailSender = Constants.DefaultEmailSender;
             }
 
+            if(int.TryParse(Environment.GetEnvironmentVariable("BatchSize"), out int batchSize) && batchSize >= 0)
+            {
+                BatchSize = batchSize;
+            }
+            else
+            {
+                _logger.LogWarning("BatchSize environment variable is null or invalid. Reverting to default");
+                BatchSize = Constants.DefaultBatchSize;
+            }
+
             bool.TryParse(Environment.GetEnvironmentVariable("UseStaging"), out var useStaging);
             UseStaging = useStaging;
+
+            if (TimeSpan.TryParse(Environment.GetEnvironmentVariable("TimeBeforeExpiryToRenew"), out TimeSpan renewTime) && renewTime.TotalDays < 90 && renewTime.TotalDays > 0)
+            {
+                TimeBeforeExpiryToRenew = renewTime;
+            }
+            else
+            {
+                _logger.LogWarning("TimeBeforeExpiryToRenew environment variable is null or invalid. Reverting to default");
+                TimeBeforeExpiryToRenew = Constants.DefaultTimeBeforeExpiryToRenewCertificate;
+            }
         }
     }
 }
