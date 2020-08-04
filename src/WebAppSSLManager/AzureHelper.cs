@@ -379,7 +379,7 @@ namespace WebAppSSLManager
             }
 
             if (_hostname.StartsWith("*."))
-                config.Hostnames.AddRange(hostnamesInternal.Where(h => h.Contains(_hostnameFriendly)));
+                config.Hostnames.AddRange(hostnamesInternal.Where(h => h.EndsWith($".{_hostnameFriendly}")));
             else
                 config.Hostnames.Add(_hostname);
 
