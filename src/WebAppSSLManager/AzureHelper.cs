@@ -142,18 +142,14 @@ namespace WebAppSSLManager
                                                             .FirstOrDefault();
             
             if(existingCert == null)
-            {
                 return true;
-            }
 
             TimeSpan timeUntilExpiry = existingCert.ExpirationDate - DateTime.Now;
 
             if(timeUntilExpiry < Settings.TimeBeforeExpiryToRenew)
-            {
                 return true;
-            }
             
-            _logger.LogInformation($"   Existing certificate with thumbprint {existingCert.Thumbprint} is not close to expiry.  A new certificate is not required.");
+            _logger.LogInformation($"   Existing certificate with thumbprint {existingCert.Thumbprint} is not close to expiry. A new certificate is not required.");
 
             return false;
         }

@@ -80,9 +80,7 @@ namespace WebAppSSLManager.Models
             }
 
             if(int.TryParse(Environment.GetEnvironmentVariable("BatchSize"), out int batchSize) && batchSize >= 0)
-            {
                 BatchSize = batchSize;
-            }
             else
             {
                 _logger.LogWarning("BatchSize environment variable is null or invalid. Reverting to default");
@@ -93,9 +91,7 @@ namespace WebAppSSLManager.Models
             UseStaging = useStaging;
 
             if (TimeSpan.TryParse(Environment.GetEnvironmentVariable("TimeBeforeExpiryToRenew"), out TimeSpan renewTime) && renewTime.TotalDays < 90 && renewTime.TotalDays > 0)
-            {
                 TimeBeforeExpiryToRenew = renewTime;
-            }
             else
             {
                 _logger.LogWarning("TimeBeforeExpiryToRenew environment variable is null or invalid. Reverting to default");
