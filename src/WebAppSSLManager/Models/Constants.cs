@@ -1,4 +1,6 @@
-﻿namespace WebAppSSLManager.Models
+﻿using System;
+
+namespace WebAppSSLManager.Models
 {
     public class Constants
     {
@@ -8,5 +10,7 @@
         public const string DefaultCertificatePassword = "C0mpl1c4t3d57r1ng";
         public const string CertificateBlobContainer = "certificates";
         public const string DefaultEmailSender = "AzureWebAppSSLManager@dbtek.com.hk";
+        public const int DefaultBatchSize = 0;
+        public static readonly TimeSpan DefaultTimeBeforeExpiryToRenewCertificate = TimeSpan.FromDays(30);
     }
 }

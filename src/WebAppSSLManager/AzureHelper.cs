@@ -129,65 +129,44 @@ namespace WebAppSSLManager
         }
 
         /// <summary>
+        /// Checks whether the Azure resource needs a new certificate
+        /// </summary>
+        /// <returns>True if a new certificate should be requested</returns>
+        public static async Task<bool> NeedsNewCertificateAsync()
+        {
+            ResourceConfiguration resource = await GetResourceConfigurationAsync();
+
+            IAppServiceCertificate existingCert = resource.ExistingCertificates?
+                                                            .Where(c => c.Issuer.Contains("Let's Encrypt Authority"))
+                                                            .OrderByDescending(c => c.ExpirationDate)
+                                                            .FirstOrDefault();
+            
+            if(existingCert == null)
+            {
+                return true;
+            }
+
+            TimeSpan timeUntilExpiry = existingCert.ExpirationDate - DateTime.Now;
+
+            if(timeUntilExpiry < Settings.TimeBeforeExpiryToRenew)
+            {
+                return true;
+            }
+            
+            _logger.LogInformation($"   Existing certificate with thumbprint {existingCert.Thumbprint} is not close to expiry.  A new certificate is not required.");
+
+            return false;
+        }
+        
+        /// <summary>
         /// Add the certificate to the resource on Azure
         /// </summary>
         /// <returns></returns>
         public static async Task AddCertificateAsync()
         {
             _logger.LogInformation($"Adding certificate to App Service and registering the Bindings");
-
-            ISet<string> hostnamesInternal;
-            var hostnamesList = new List<string>();
-            Region region;
-            IResource resource;
-
-            switch (_resourceType)
-            {
-                case ResourceType.WebAppSlot:
-                    var slot = await _azure.WebApps.ListByResourceGroup(_resourceResGroup).Where(w => w.Name.Equals(_resourceName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault().DeploymentSlots.GetByNameAsync(_slotName);
-                    hostnamesInternal = slot.HostNames;
-
-                    region = slot.Region;
-                    resource = slot;
-
-                    break;
-                case ResourceType.FunctionApp:
-                    var functionApp = _azure.AppServices.FunctionApps.ListByResourceGroup(_resourceResGroup).Where(fa => fa.Name.Equals(_resourceName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault();
-                    hostnamesInternal = functionApp.HostNames;
-
-                    region = functionApp.Region;
-                    resource = functionApp;
-
-                    break;
-                case ResourceType.FunctionAppSlot:
-                    var functionAppSlot = await _azure.AppServices.FunctionApps.ListByResourceGroup(_resourceResGroup).Where(fa => fa.Name.Equals(_resourceName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault().DeploymentSlots.GetByNameAsync(_slotName);
-                    hostnamesInternal = functionAppSlot.HostNames;
-
-                    region = functionAppSlot.Region;
-                    resource = functionAppSlot;
-
-                    break;
-                case ResourceType.WebApp:
-                default:
-                    var webApp = _azure.WebApps.ListByResourceGroup(_resourceResGroup).Where(w => w.Name.Equals(_resourceName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault();
-                    hostnamesInternal = webApp.HostNames;
-
-                    region = webApp.Region;
-                    resource = webApp;
-
-                    break;
-            }
-
-            if (_hostname.StartsWith("*."))
-                hostnamesList.AddRange(hostnamesInternal.Where(h => h.EndsWith($".{_hostnameFriendly}")));
-            else
-                hostnamesList.Add(_hostname);
-
-            //Retrieving old certificate, if any
-            _logger.LogInformation($"   Retrieving old certificate, if any");
-
-            var oldCertificates = _azure.AppServices.AppServiceCertificates.ListByResourceGroup(_resourcePlanResGroup).Where(c => c.HostNames.Contains(_hostname));
-            _logger.LogInformation($"   Found {oldCertificates.Count()}");
+            
+            var resource = await GetResourceConfigurationAsync();
 
             _logger.LogInformation($"   Uploading Certificate");
 
@@ -195,7 +174,7 @@ namespace WebAppSSLManager
 
             var certificate = await _azure.AppServices.AppServiceCertificates
                                         .Define($"{_hostname}_{DateTime.UtcNow.ToString("yyyyMMdd")}")
-                                        .WithRegion(region)
+                                        .WithRegion(resource.Region)
                                         .WithExistingResourceGroup(_resourcePlanResGroup)
                                         .WithPfxByteArray(pfxByteArrayContent)
                                         .WithPfxPassword(Settings.CertificatePassword)
@@ -203,16 +182,16 @@ namespace WebAppSSLManager
 
             var certificateThumbPrint = certificate.Thumbprint;
             _logger.LogInformation($"   Certificate Uploaded");
-            _logger.LogInformation($"   Bindings to process: {hostnamesList.Count}");
+            _logger.LogInformation($"   Bindings to process: {resource.Hostnames.Count}");
 
-            foreach (var hostname in hostnamesList)
+            foreach (var hostname in resource.Hostnames)
             {
                 try
                 {
                     switch (_resourceType)
                     {
                         case ResourceType.WebAppSlot:
-                            var slot = resource as IDeploymentSlot;
+                            var slot = resource.Resource as IDeploymentSlot;
                             _logger.LogInformation($"       Updating '{hostname}' on WebApp Slot '{slot.Name}'");
 
                             slot = await slot
@@ -225,7 +204,7 @@ namespace WebAppSSLManager
                                     .ApplyAsync();
                             break;
                         case ResourceType.FunctionApp:
-                            var functionApp = resource as IFunctionApp;
+                            var functionApp = resource.Resource as IFunctionApp;
                             _logger.LogInformation($"       Updating '{hostname}' on FunctionApp '{functionApp.Name}'");
 
                             functionApp = await functionApp
@@ -238,7 +217,7 @@ namespace WebAppSSLManager
                                             .ApplyAsync();
                             break;
                         case ResourceType.FunctionAppSlot:
-                            var functionAppSlot = resource as IFunctionDeploymentSlot;
+                            var functionAppSlot = resource.Resource as IFunctionDeploymentSlot;
                             _logger.LogInformation($"       Updating '{hostname}' on FunctionApp Slot '{functionAppSlot.Name}'");
 
                             functionAppSlot = await functionAppSlot
@@ -252,7 +231,7 @@ namespace WebAppSSLManager
                             break;
                         case ResourceType.WebApp:
                         default:
-                            var webApp = resource as IWebApp;
+                            var webApp = resource.Resource as IWebApp;
                             _logger.LogInformation($"       Updating '{hostname}' on WebApp '{webApp.Name}'");
 
                             webApp = await webApp
@@ -286,11 +265,11 @@ namespace WebAppSSLManager
             }
             _logger.LogInformation($"   All bindings processed and secured with SSL");
 
-            if (oldCertificates.Any())
+            if (resource.ExistingCertificates.Any())
             {
                 _logger.LogInformation($"   Removing old certificates");
 
-                foreach (var oldCert in oldCertificates)
+                foreach (var oldCert in resource.ExistingCertificates)
                 {
                     if (oldCert.Thumbprint != certificate.Thumbprint)
                     {
@@ -355,6 +334,62 @@ namespace WebAppSSLManager
             _blobContainer = null;
             _blobClient = null;
             _azure = null;
+        }
+
+        private static async Task<ResourceConfiguration> GetResourceConfigurationAsync()
+        {
+            var config = new ResourceConfiguration();
+            ISet<string> hostnamesInternal;
+
+            switch (_resourceType)
+            {
+                case ResourceType.WebAppSlot:
+                    var slot = await _azure.WebApps.ListByResourceGroup(_resourceResGroup).Where(w => w.Name.Equals(_resourceName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault().DeploymentSlots.GetByNameAsync(_slotName);
+                    hostnamesInternal = slot.HostNames;
+
+                    config.Region = slot.Region;
+                    config.Resource = slot;
+
+                    break;
+                case ResourceType.FunctionApp:
+                    var functionApp = _azure.AppServices.FunctionApps.ListByResourceGroup(_resourceResGroup).Where(fa => fa.Name.Equals(_resourceName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault();
+                    hostnamesInternal = functionApp.HostNames;
+
+                    config.Region = functionApp.Region;
+                    config.Resource = functionApp;
+
+                    break;
+                case ResourceType.FunctionAppSlot:
+                    var functionAppSlot = await _azure.AppServices.FunctionApps.ListByResourceGroup(_resourceResGroup).Where(fa => fa.Name.Equals(_resourceName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault().DeploymentSlots.GetByNameAsync(_slotName);
+                    hostnamesInternal = functionAppSlot.HostNames;
+
+                    config.Region = functionAppSlot.Region;
+                    config.Resource = functionAppSlot;
+
+                    break;
+                case ResourceType.WebApp:
+                default:
+                    var webApp = _azure.WebApps.ListByResourceGroup(_resourceResGroup).Where(w => w.Name.Equals(_resourceName, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault();
+                    hostnamesInternal = webApp.HostNames;
+
+                    config.Region = webApp.Region;
+                    config.Resource = webApp;
+
+                    break;
+            }
+
+            if (_hostname.StartsWith("*."))
+                config.Hostnames.AddRange(hostnamesInternal.Where(h => h.EndsWith($".{_hostnameFriendly}")));
+            else
+                config.Hostnames.Add(_hostname);
+
+            //Retrieving old certificate, if any
+            _logger.LogInformation($"   Retrieving old certificate, if any");
+
+            config.ExistingCertificates = _azure.AppServices.AppServiceCertificates.ListByResourceGroup(_resourcePlanResGroup).Where(c => c.HostNames.Contains(_hostname)).ToList();
+            _logger.LogInformation($"   Found {config.ExistingCertificates.Count()}");
+
+            return config;
         }
     }
 }

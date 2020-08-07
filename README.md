@@ -110,10 +110,16 @@ They can be created in the Azure Web App configuration section when deployed, or
     "AzureStorageAccountConnectionString": "AZURE_STORAGE_FULL_CONNECTION_STRING",
     "SendGridKey": "SENDGRID_KEY",
     "EmailSender": "SENDER@YOURSERVICE.EXT",
-    "UseStaging": "[True|False]"
+    "UseStaging": "[True|False]",
+	"BatchSize": [<0 for no batching> | <int>],
+	"TimeBeforeExpiryToRenew": "days.hours:minutes:seconds"
 ```
 
 The config settings for the Service Principal are the ones from the output of the Service Principal creation above.
+
+BatchSize is optional and defaults to 0.
+
+TimeBeforeExpiryToRenew is optional and defaults to "30.00:00:00" (renew certificates 30 days before they expire).
 
 ## Application Properties Configuration File
 
