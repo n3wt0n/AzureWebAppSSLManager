@@ -137,7 +137,7 @@ namespace WebAppSSLManager
             ResourceConfiguration resource = await GetResourceConfigurationAsync();
 
             IAppServiceCertificate existingCert = resource.ExistingCertificates?
-                                                            .Where(c => c.Issuer.Contains("Let's Encrypt Authority"))
+                                                            .Where(c => c.Issuer.Contains(Constants.DefaultCA))
                                                             .OrderByDescending(c => c.ExpirationDate)
                                                             .FirstOrDefault();
             
