@@ -35,7 +35,7 @@ namespace WebAppSSLManager
 
             var accountKeyFileName = Constants.AccountKeyFileName;
             if (Settings.UseStaging)
-                accountKeyFileName = "staging" + accountKeyFileName;
+                accountKeyFileName = $"staging{accountKeyFileName}";
 
             IAccountContext account;
 
