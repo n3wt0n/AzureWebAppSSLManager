@@ -49,8 +49,7 @@ namespace WebAppSSLManager
                     CertificatesHelper.InitAppProperty(appProperty);
 
                     try
-                    {
-                        
+                    {                        
                         //Request certificate and install it if all is ok
                         if (await AzureHelper.NeedsNewCertificateAsync() && await CertificatesHelper.GetCertificateAsync())
                         {

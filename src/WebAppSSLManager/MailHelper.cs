@@ -60,6 +60,7 @@ namespace WebAppSSLManager
             {
                 subject += " with errors";
                 message += $"with {errors.Count} errors.{Environment.NewLine}The following errors occurred: {Environment.NewLine}";
+
                 foreach (var (hostname, errorMessage) in errors)
                 {
                     message += $"{hostname}: {errorMessage}{Environment.NewLine}";
