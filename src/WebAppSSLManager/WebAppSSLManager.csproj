@@ -6,7 +6,7 @@
   <ItemGroup>
     <PackageReference Include="Certes" Version="2.3.4" />
     <PackageReference Include="Microsoft.Azure.Management.Fluent" Version="1.34.0" />
-    <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.2.0" />
+    <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.2.2" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="3.0.6" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.SendGrid" Version="3.0.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.9" />
