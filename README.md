@@ -127,7 +127,7 @@ Currently AzureWebAppSSLManager retrieves the list of certificates to generate a
 
 An example of the file structure can be found in the *[appproperties.json](../master/SampleJsonConfig/appproperties.json)* example file.
 
-The file needs to be saved in a blob container with name as in the constant "AppPropertiesFileName" of the *[Constants.cs](../master/src/WebAppSSLManager/Models/Contants.cs)* class.
+The file needs to be saved in a blob container with name as in the constant "AppPropertiesFileName" of the *[Constants.cs](../master/src/WebAppSSLManager/Models/Constants.cs)* class.
 
 ## Certificate Information Configuration File
 
@@ -135,7 +135,7 @@ The app retrieves some information neeed for the certificate creation from a jso
 
 An example of the file structure can be found in the *[certinfo.json](../master/SampleJsonConfig/certinfo.json)* example file.
 
-The file needs to be saved in a blob container with name as in the constant "CertInfoFileName" of the *[Constants.cs](../master/src/WebAppSSLManager/Models/Contants.cs)* class.
+The file needs to be saved in a blob container with name as in the constant "CertInfoFileName" of the *[Constants.cs](../master/src/WebAppSSLManager/Models/Constants.cs)* class.
 
 ## Limitations
 
