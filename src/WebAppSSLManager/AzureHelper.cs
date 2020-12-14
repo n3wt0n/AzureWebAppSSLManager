@@ -42,7 +42,7 @@ namespace WebAppSSLManager
                                     Settings.ServicePrincipalTenantID,
                                     AzureEnvironment.AzureGlobalCloud);
 
-            _azure = Azure
+            _azure = Microsoft.Azure.Management.Fluent.Azure
                 .Configure()
                 .WithLogLevel(HttpLoggingDelegatingHandler.Level.Basic)
                 .Authenticate(credentials)
