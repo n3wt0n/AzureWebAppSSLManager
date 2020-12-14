@@ -1,4 +1,4 @@
-![Logo](../main/assets/Logo/png)
+![Logo](../main/assets/Logo.png)
 
 ![CI Badge](https://github.com/n3wt0n/AzureWebAppSSLManager/workflows/CI/badge.svg)
 [![License](https://img.shields.io/github/license/n3wt0n/AzureWebAppSSLManager.svg)](https://github.com/n3wt0n/AzureWebAppSSLManager/blob/main/LICENSE)
