@@ -21,7 +21,7 @@ Azure WebApp SSL Manager is an Azure Function that acquires and manages **free**
 
 Azure WebApp SSL Manager is an Azure Function that acquires and manages **free** SSL certificates for applications hosted on Azure Web Apps and Azure Function Apps
 
-Main Tasks perfomed:
+Main Tasks performed:
 
 - Order/Renewal of SSL certificates from [Let's Encrypt](https://letsencrypt.org/) free trusted CA
 - Validation of the order using Azure DNS TXT record
