@@ -111,15 +111,18 @@ They can be created in the Azure Web App configuration section when deployed, or
     "SendGridKey": "SENDGRID_KEY",
     "EmailSender": "SENDER@YOURSERVICE.EXT",
     "UseStaging": "[True|False]",
-	"BatchSize": [<0 for no batching> | <int>],
-	"TimeBeforeExpiryToRenew": "days.hours:minutes:seconds"
+    "BatchSize": [<0 for no batching> | <int>],
+    "DaysBeforeExpiryToRenew": 30,
+    "WebAppSSLManager-Trigger": "0 0 0 1 * *"
 ```
 
 The config settings for the Service Principal are the ones from the output of the Service Principal creation above.
 
 BatchSize is optional and defaults to 0.
 
-TimeBeforeExpiryToRenew is optional and defaults to "30.00:00:00" (renew certificates 30 days before they expire).
+DaysBeforeExpiryToRenew is optional and defaults to 30 (renew certificates 30 days before they expire).
+
+WebAppSSLManager-Trigger is the the trigger configuration (i.e how frequently the Function will run, default every 1st day of each month)
 
 ## Application Properties Configuration File
 

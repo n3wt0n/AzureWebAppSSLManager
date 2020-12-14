@@ -4,7 +4,7 @@ Register-AzResourceProvider -ProviderNamespace "microsoft.storage"
 Register-AzResourceProvider -ProviderNamespace "microsoft.insights"
 
 # Create a resource group for the function app
-New-AzResourceGroup -Name "MyResourceGroup" -Location 'West Europe'
+New-AzResourceGroup -Name "YOUR_RESOURCE_GROUP_NAME" -Location 'West Europe'
 
 # Deploy the template
-New-AzResourceGroupDeployment -ResourceGroupName "MyResourceGroup" -TemplateFile template.json -TemplateParameterFile parameters.json -Verbose
+New-AzResourceGroupDeployment -ResourceGroupName "YOUR_RESOURCE_GROUP_NAME" -TemplateFile template.json -TemplateParameterFile parameters.json -Verbose
