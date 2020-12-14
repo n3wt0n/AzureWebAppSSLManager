@@ -1,11 +1,11 @@
-# Azure WebApp SSL Manager
+![Logo](../main/assets/Logo/png)
 
 ![CI Badge](https://github.com/n3wt0n/AzureWebAppSSLManager/workflows/CI/badge.svg)
-[![License](https://img.shields.io/github/license/n3wt0n/AzureWebAppSSLManager.svg)](https://github.com/n3wt0n/AzureWebAppSSLManager/blob/master/LICENSE)
+[![License](https://img.shields.io/github/license/n3wt0n/AzureWebAppSSLManager.svg)](https://github.com/n3wt0n/AzureWebAppSSLManager/blob/main/LICENSE)
 
 Azure WebApp SSL Manager is an Azure Function that acquires and manages **free** SSL certificates for Azure Web App and Azure Function App hosted applications.
 
-[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fn3wt0n%2FAzureWebAppSSLManager%2Fmaster%2FARM%2520Template%2Ftemplate.json) [![Visualize](http://armviz.io/visualizebutton.png)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fn3wt0n%2FAzureWebAppSSLManager%2Fmaster%2FARM%2520Template%2Ftemplate.json)
+[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fn3wt0n%2FAzureWebAppSSLManager%main%2FARM%2520Template%2Ftemplate.json) [![Visualize](http://armviz.io/visualizebutton.png)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fn3wt0n%2FAzureWebAppSSLManager%main%2FARM%2520Template%2Ftemplate.json)
 
 > **Pre-Deployment**  
 > Before deploying this solution to Azure, you need to create a Service Principal (see below).  
@@ -47,7 +47,7 @@ This project depends on few other project:
 
 ## Prerequisites
 
-In order to succesfully use this application, you need a number of Prerequisites.
+In order to successfully use this application, you need a number of Prerequisites.
 
 - Either:
   - At least one Azure Web App, with at least one custom domain assigned, running in Basic, Standard or Premium tier, OR
@@ -61,7 +61,7 @@ In order to succesfully use this application, you need a number of Prerequisites
 
 #### Service Principal
 
-You need to have a Service Principal to be able to performa management operations on Azure, like uploading the certificate to the App Service or managing the DNS Zone.
+You need to have a Service Principal to be able to perform management operations on Azure, like uploading the certificate to the App Service or managing the DNS Zone.
 
 If you don't have a Service Principal, you can create one with the following command via Azure CLI. You can execute the command from any PC with the Azure CLI installed or from the [Azure Shell](http://shell.azure.com)
 
@@ -69,7 +69,7 @@ If you don't have a Service Principal, you can create one with the following com
 az ad sp create-for-rbac
 ```
 
-You need to have enough privileges in your Azure AAD to be able to succesfully create a Service Principal.
+You need to have enough privileges in your Azure AAD to be able to successfully create a Service Principal.
 
 Visit the [Azure Docs page](https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?view=azure-cli-latest) for more information about Azure Service Principals creation.
 
@@ -126,19 +126,19 @@ WebAppSSLManager-Trigger is the the trigger configuration (i.e how frequently th
 
 ## Application Properties Configuration File
 
-Currently AzureWebAppSSLManager retrieves the list of certificates to generate and install from a json file stored in a blob storage accout.
+Currently AzureWebAppSSLManager retrieves the list of certificates to generate and install from a json file stored in a blob storage account.
 
-An example of the file structure can be found in the *[appproperties.json](../master/SampleJsonConfig/appproperties.json)* example file.
+An example of the file structure can be found in the *[appproperties.json](../main/SampleJsonConfig/appproperties.json)* example file.
 
-The file needs to be saved in a blob container with name as in the constant "AppPropertiesFileName" of the *[Constants.cs](../master/src/WebAppSSLManager/Models/Constants.cs)* class.
+The file needs to be saved in a blob container with name as in the constant "AppPropertiesFileName" of the *[Constants.cs](../main/src/WebAppSSLManager/Models/Constants.cs)* class.
 
 ## Certificate Information Configuration File
 
-The app retrieves some information neeed for the certificate creation from a json file stored in a blob storage accout.
+The app retrieves some information needed for the certificate creation from a json file stored in a blob storage account.
 
-An example of the file structure can be found in the *[certinfo.json](../master/SampleJsonConfig/certinfo.json)* example file.
+An example of the file structure can be found in the *[certinfo.json](../main/SampleJsonConfig/certinfo.json)* example file.
 
-The file needs to be saved in a blob container with name as in the constant "CertInfoFileName" of the *[Constants.cs](../master/src/WebAppSSLManager/Models/Constants.cs)* class.
+The file needs to be saved in a blob container with name as in the constant "CertInfoFileName" of the *[Constants.cs](../main/src/WebAppSSLManager/Models/Constants.cs)* class.
 
 ## Limitations
 
