@@ -137,12 +137,16 @@ namespace WebAppSSLManager
             ResourceConfiguration resource = await GetResourceConfigurationAsync();
 
             IAppServiceCertificate existingCert = resource.ExistingCertificates?
-                                                            .Where(c => c.Issuer.Contains(Constants.DefaultCA))
+                                                            .Where(c => c.Issuer.Contains(Constants.DefaultCA) || c.Issuer.Equals(Constants.DefaultIntermediate))
                                                             .OrderByDescending(c => c.ExpirationDate)
                                                             .FirstOrDefault();
-            
-            if(existingCert == null)
+
+            if (existingCert == null)
+            {
+                _logger.LogInformation("   No existing certificate found.");
+
                 return true;
+            }
 
             TimeSpan timeUntilExpiry = existingCert.ExpirationDate - DateTime.Now;
 
