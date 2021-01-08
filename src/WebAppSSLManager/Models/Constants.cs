@@ -11,6 +11,7 @@ namespace WebAppSSLManager.Models
         public const string CertificateBlobContainer = "certificates";
         public const string DefaultEmailSender = "AzureWebAppSSLManager@dbtek.com.hk";
         public const string DefaultCA = "Let's Encrypt Authority";
+        public const string DefaultIntermediate = "R3";
         public const int DefaultBatchSize = 0;
         public const int DaysBeforeExpiryToRenew = 30;
     }
