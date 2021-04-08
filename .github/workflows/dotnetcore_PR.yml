@@ -22,4 +22,12 @@ jobs:
     - name: Build with dotnet
       run: dotnet build ./src/WebAppSSLManager.sln --configuration Release
   
-
+  lint:
+  
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Super-Linter
+      uses: github/super-linter@v3.15.5
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
