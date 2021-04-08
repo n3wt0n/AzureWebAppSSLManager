@@ -12,9 +12,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.200
     - name: Build with dotnet
       run: dotnet build ./src/WebAppSSLManager.sln --configuration Release
+      
+  lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Super-Linter
+      uses: github/super-linter@v3.15.5
