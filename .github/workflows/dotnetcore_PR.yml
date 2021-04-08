@@ -27,6 +27,8 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    - uses: actions/checkout@v1
+    
     - name: Super-Linter
       uses: github/super-linter@v3.15.5
       env:
