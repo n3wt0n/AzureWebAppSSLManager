@@ -21,10 +21,5 @@ jobs:
         dotnet-version: 3.1.200
     - name: Build with dotnet
       run: dotnet build ./src/WebAppSSLManager.sln --configuration Release
-      
-  lint:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Super-Linter
-      uses: github/super-linter@v3.15.5
+  
+
