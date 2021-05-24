@@ -7,7 +7,8 @@ on:
     paths:
     - 'src/**'
     - 'ARM Template/**'
-
+  workflow_dispatch:
+    
 jobs:
   build:
 
