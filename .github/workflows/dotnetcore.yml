@@ -35,4 +35,5 @@ jobs:
       uses: aliencube/arm-ttk-actions@v0.3
       with:
         # ARM Template file path to run the test. It can be either a directory or single file.
-        path: SampleJsonConfig
+        path: './ARM Template'
+        files: template.json
