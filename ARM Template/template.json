@@ -213,7 +213,7 @@
                 ],
                 "properties": {
                   "RepoUrl": "https://github.com/n3wt0n/AzureWebAppSSLManager.git",
-                  "branch": "master",
+                  "branch": "main",
                   "IsManualIntegration": true
                 }
               }
