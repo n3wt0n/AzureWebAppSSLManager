@@ -91,7 +91,7 @@ namespace WebAppSSLManager.Models
             bool.TryParse(Environment.GetEnvironmentVariable("UseStaging"), out var useStaging);
             UseStaging = useStaging;
 
-            if (int.TryParse(Environment.GetEnvironmentVariable("DaysBeforeExpiryToRenew"), out int days) && batchSize >= 0)
+            if (int.TryParse(Environment.GetEnvironmentVariable("DaysBeforeExpiryToRenew"), out int days) && days >= 0)
                 DaysBeforeExpiryToRenew = days;
             else
             {
