@@ -36,12 +36,12 @@
             "type": "string"
         },
 		"batchSize": {
-			"type": "string",
-			"defaultValue": "0"
+			"type": "int",
+			"defaultValue": 0
 		},
 		"daysBeforeExpiryToRenew": {
 			"type": "int",
-			"defaultValue": "30"
+			"defaultValue": 30
 		},
 		"webAppSSLManager-Trigger": {
 			"type": "string",

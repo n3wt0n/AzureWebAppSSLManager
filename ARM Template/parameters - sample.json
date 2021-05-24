@@ -36,10 +36,10 @@
             "value": "False"
         },
 		"BatchSize": {
-			"value": "0"
+			"value": 0
 		},
 		"DaysBeforeExpiryToRenew": {
-			"value": "30"
+			"value": 30
 		},
 		"WebAppSSLManager-Trigger": {
 			"value": "0 0 0 1 * *"
