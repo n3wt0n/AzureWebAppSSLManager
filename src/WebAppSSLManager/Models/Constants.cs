@@ -14,5 +14,6 @@ namespace WebAppSSLManager.Models
         public const string DefaultIntermediate = "R3";
         public const int DefaultBatchSize = 0;
         public const int DaysBeforeExpiryToRenew = 30;
+        public static readonly TimeSpan WaitTimeBeforeValidate = TimeSpan.FromSeconds(10);
     }
 }
