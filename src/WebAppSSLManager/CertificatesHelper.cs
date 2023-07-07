@@ -125,8 +125,8 @@ namespace WebAppSSLManager
             await AzureHelper.RemoveDNSVerificationTXTRecord(recordName); //to be sure we start clean
             await AzureHelper.CreateDNSVerificationTXTRecord(recordName, dnsTxt);
 
-            _logger.LogInformation($"   Waiting before validating DNS authorization challenge...");
-            Thread.Sleep(Settings.WaitTimeBeforeValidate);
+            _logger.LogInformation($"   Waiting {Settings.WaitTimeBeforeValidate.TotalSeconds} seconds before validating DNS authorization challenge...");
+            await Task.Delay(Settings.WaitTimeBeforeValidate.TotalMilliseconds);
 
             _logger.LogInformation($"   Validating DNS authorization challenge. Can take up to 90 seconds...");
             var validatedChallege = await dnsChallenge.Validate();
