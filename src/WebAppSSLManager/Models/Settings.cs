@@ -19,6 +19,7 @@ namespace WebAppSSLManager.Models
         public static int BatchSize { get; private set; }
         public static int DaysBeforeExpiryToRenew { get; private set; }
         public static TimeSpan TimeBeforeExpiryToRenew { get; private set; }
+        public static TimeSpan WaitTimeBeforeValidate { get; private set; }
 
         public static void Init(ILogger logger)
         {
@@ -100,6 +101,14 @@ namespace WebAppSSLManager.Models
             }
 
             TimeBeforeExpiryToRenew = TimeSpan.FromDays(DaysBeforeExpiryToRenew);
+
+            if (int.TryParse(Environment.GetEnvironmentVariable("WaitTimeBeforeValidateInSeconds"), out int seconds) && seconds >= 0)
+                WaitTimeBeforeValidate = TimeSpan.FromSeconds(seconds);
+            else
+            {
+                _logger.LogWarning("WaitTimeBeforeValidateInSeconds environment variable is null or invalid. Reverting to default");
+                WaitTimeBeforeValidate = Constants.WaitTimeBeforeValidate;
+            }
         }
     }
 }

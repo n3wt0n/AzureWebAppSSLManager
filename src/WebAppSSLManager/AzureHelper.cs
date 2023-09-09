@@ -384,10 +384,10 @@ namespace WebAppSSLManager
                 config.Hostnames.Add(_hostname);
 
             //Retrieving old certificate, if any
-            _logger.LogInformation($"   Retrieving old certificate, if any");
+            _logger.LogInformation($"   Retrieving old certificate for {_hostname}, if any");
 
             config.ExistingCertificates = _azure.AppServices.AppServiceCertificates.ListByResourceGroup(_resourcePlanResGroup).Where(c => c.HostNames.Contains(_hostname)).ToList();
-            _logger.LogInformation($"   Found {config.ExistingCertificates.Count()}");
+            _logger.LogInformation($"   Found {config.ExistingCertificates.Count}");
 
             return config;
         }
